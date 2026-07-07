@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>3D Cyber Shooter - Hover Mech Edition (Click Fixed)</title>
+    <title>3D Cyber Shooter - Absolute Complete Edition</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #0d0d1a; font-family: 'Helvetica Neue', Arial, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #game-canvas { width: 100vw; height: 100vh; display: block; }
@@ -88,7 +88,6 @@
 
     <canvas id="game-canvas"></canvas>
 
-    <!-- 各画面のHTML -->
     <div id="main-menu" class="menu-screen">
         <div class="menu-title">CYBER BATTLE<br><span style="font-size:20px; color:#8a8aaf;">3D WEB PROTOTYPE</span></div>
         <div id="main-coin" class="coin-display">COIN: 0</div>
@@ -188,7 +187,7 @@
             shock: { lv: 1, max: 5,  basePrice: 150, scale: 1.6 }
         };
 
-        // サウンド
+        // サウンド合成
         let audioCtx = null; let bgmNode = null;
         function initAudio() { if (audioCtx || isMuted) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); startBGM(); }
         function toggleMute() {
@@ -258,12 +257,14 @@
             if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); switchScreen('status-shop'); }
         }
 
-        // 3D 基本設定
+        // 3D 基本設定（iOS軽量化チューニング適用）
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0e0e1a);
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         const canvas = document.getElementById('game-canvas');
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(1); // 等倍ピクセルに固定してGPU処理を圧倒的に削減
 
         const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
 
@@ -325,7 +326,6 @@
         const shieldMesh = new THREE.Mesh(new THREE.SphereGeometry(1.1, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00bfff, transparent: true, opacity: 0, wireframe: true }));
         player.add(shieldMesh); shieldMesh.position.y = 0.65;
 
-        // ⭐【タイポ修正箇所】#ffd700 を 文字列化（'#ffd700'）してエラーを解消
         const shockVisualMesh = new THREE.Mesh(new THREE.SphereGeometry(3.0, 24, 24), new THREE.MeshBasicMaterial({ color: '#ffd700', transparent: true, opacity: 0, wireframe: true }));
         player.add(shockVisualMesh); shockVisualMesh.position.y = 0.65;
 
@@ -334,7 +334,10 @@
 
         camera.position.set(0, 5, 7); camera.lookAt(player.position);
 
-        // バトル管理
+        // バトル管理・クロック同期システム追加
+        const clock = new THREE.Clock();
+        const TIME_SCALE = 60; // 60fpsを等倍基準とする倍率
+
         let activeBattle = false; let playerHP = 5; let maxPlayerHP = 5;
         let shieldHP = 3; let maxShieldHP = 3; let isShieldBroken = false; let isGuarding = false; let lockedEnemyIndex = -1;
         const enemies = []; const bullets = []; let playerAttackCooldown = 0;
@@ -402,7 +405,7 @@
                 if (dist <= shockRadius) {
                     e.hp -= shockDamage;
                     e.mesh.position.x += (e.mesh.position.x - player.position.x) * 0.4;
-                    document.body.style.backgroundColor = '#151535'; setTimeout(() => document.body.style.backgroundColor = '#0d0d1a', 50); // 微弱な画面フラッシュ
+                    document.body.style.backgroundColor = '#151535'; setTimeout(() => document.body.style.backgroundColor = '#0d0d1a', 50);
                     e.mesh.position.z += (e.mesh.position.z - player.position.z) * 0.4;
                     if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === idx) lockedEnemyIndex = -1; }
                 }
@@ -430,6 +433,7 @@
             }
             document.getElementById('stage-select').style.display = 'none'; document.getElementById('ingame-ui').style.display = 'block';
             updateInGameUI(); initAudio();
+            clock.getDelta(); // タイマースタート時のズレ防止リセット
         }
 
         function updateInGameUI() {
@@ -523,18 +527,22 @@
             updateInGameUI();
         }
 
-        // ゲームループ
+        // ゲームループ（デルタタイムによる厳密な時間制御）
         const BULLET_SPEED = 0.08; const enemyBulletSpeed = 0.07; const enemyMoveSpeed = 0.015;
         let hoverTime = 0;
 
         function animate() {
             requestAnimationFrame(animate);
 
-            hoverTime += 0.05;
+            // 前の描画からの経過時間（秒）を計算して倍率を出す
+            const dt = clock.getDelta();
+            const deltaScale = dt * TIME_SCALE; // 30fpsの環境なら、deltaScaleは自動で「2.0」になる
+
+            hoverTime += 0.05 * deltaScale;
             player.position.y = 0.1 * Math.sin(hoverTime);
 
             hoverEffects.forEach(eff => {
-                eff.scale += 0.02; eff.opacity -= 0.01;
+                eff.scale += 0.02 * deltaScale; eff.opacity -= 0.01 * deltaScale;
                 if (eff.opacity <= 0) { eff.scale = 0.5; eff.opacity = 0.6; }
                 eff.mesh.scale.set(eff.scale, eff.scale, 1);
                 eff.mesh.material.opacity = playerHP > 0 ? eff.opacity : 0;
@@ -542,15 +550,19 @@
             });
 
             if (activeBattle) {
-                const curSpeed = isGuarding ? getPlayerStat('speed') * 0.4 : getPlayerStat('speed');
+                const curSpeed = (isGuarding ? getPlayerStat('speed') * 0.4 : getPlayerStat('speed')) * deltaScale;
                 if (inputX !== 0 || inputZ !== 0) {
                     player.position.x += inputX * curSpeed; player.position.z += inputZ * curSpeed;
                     playerRotation = Math.atan2(-inputX, -inputZ); player.rotation.y = playerRotation;
                 }
-                if (playerAttackCooldown > 0) playerAttackCooldown--;
+                if (playerAttackCooldown > 0) {
+                    playerAttackCooldown -= deltaScale;
+                    if (playerAttackCooldown < 0) playerAttackCooldown = 0;
+                }
                 
                 if (playerShockCooldown > 0) {
-                    playerShockCooldown--;
+                    playerShockCooldown -= deltaScale;
+                    if (playerShockCooldown < 0) playerShockCooldown = 0;
                     const seconds = (playerShockCooldown / 60).toFixed(1);
                     document.getElementById('shock-cooldown-overlay').textContent = seconds;
                     document.getElementById('shock-cooldown-overlay').style.opacity = 1;
@@ -559,7 +571,8 @@
                 }
 
                 if (shockVisualTimer > 0) {
-                    shockVisualTimer--;
+                    shockVisualTimer -= deltaScale;
+                    if (shockVisualTimer < 0) shockVisualTimer = 0;
                     shockVisualMesh.material.opacity = (shockVisualTimer / 15) * 0.6;
                     shockVisualMesh.scale.set(1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15));
                 } else {
@@ -567,12 +580,12 @@
                 }
 
                 shieldMesh.material.opacity = (isGuarding && !isShieldBroken) ? 0.4 : 0;
-                if(isGuarding) shieldMesh.rotation.y += 0.04;
+                if(isGuarding) shieldMesh.rotation.y += 0.04 * deltaScale;
 
                 if (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex] && enemies[lockedEnemyIndex].hp > 0) {
                     const targetMesh = enemies[lockedEnemyIndex].mesh;
                     lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z);
-                    lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02;
+                    lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale;
                 } else { lockMarker.material.opacity = 0; lockedEnemyIndex = -1; }
 
                 let totalEnemyHP = 0;
@@ -581,8 +594,8 @@
                     const dist = e.mesh.position.distanceTo(player.position);
                     const dx = player.position.x - e.mesh.position.x; const dz = player.position.z - e.mesh.position.z; const angle = Math.atan2(dz, dx);
                     e.mesh.rotation.y = -angle + Math.PI/2;
-                    if (dist > 4.5) { e.mesh.position.x += Math.cos(angle) * enemyMoveSpeed; e.mesh.position.z += Math.sin(angle) * enemyMoveSpeed; }
-                    e.shootTimer--;
+                    if (dist > 4.5) { e.mesh.position.x += Math.cos(angle) * enemyMoveSpeed * deltaScale; e.mesh.position.z += Math.sin(angle) * enemyMoveSpeed * deltaScale; }
+                    e.shootTimer -= deltaScale;
                     if (e.shootTimer <= 0) { e.shootTimer = 70 + Math.random() * 40; const erraticAngle = angle + (Math.random() - 0.5) * 0.4; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false); }
                 });
 
@@ -594,13 +607,13 @@
                         const tx = b.target.position.x - b.mesh.position.x; const tz = b.target.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz);
                         if (d > 0.1) { b.dirX = b.dirX * 0.94 + (tx / d) * 0.06; b.dirZ = b.dirZ * 0.94 + (tz / d) * 0.06; const bl = Math.sqrt(b.dirX*b.dirX + b.dirZ*b.dirZ); b.dirX /= bl; b.dirZ /= bl; }
                     }
-                    const bSpd = b.isPlayer ? BULLET_SPEED : enemyBulletSpeed; b.mesh.position.x += b.dirX * bSpd; b.mesh.position.z += b.dirZ * bSpd; b.life--;
+                    const bSpd = (b.isPlayer ? BULLET_SPEED : enemyBulletSpeed) * deltaScale; b.mesh.position.x += b.dirX * bSpd; b.mesh.position.z += b.dirZ * bSpd; b.life -= deltaScale;
                     let removed = false;
                     if (b.isPlayer) {
                         for (let j = 0; j < enemies.length; j++) {
                             const e = enemies[j]; if (e.hp <= 0) continue;
                             if (b.mesh.position.distanceTo(e.mesh.position) < 0.8) {
-                                e.hp -= getPlayerStat('atk'); playSound('hit'); e.mesh.position.x += b.dirX * 0.3; e.mesh.position.z += b.dirZ * 0.3;
+                                e.hp -= getPlayerStat('atk'); playSound('hit'); e.mesh.position.x += b.dirX * 0.3 * deltaScale; e.mesh.position.z += b.dirZ * 0.3 * deltaScale;
                                 if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === j) lockedEnemyIndex = -1; }
                                 scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); break;
                             }
