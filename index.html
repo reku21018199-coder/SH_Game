@@ -129,8 +129,8 @@
     <!-- ミッション選択 -->
     <div id="stage-select" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">ミッション選択</div>
-        <div class="menu-btn" onclick="startBattle(1)">ステージ 1 (1 ターゲット)</div>
-        <div class="menu-btn" onclick="startBattle(2)">ステージ 2 (3 ターゲット)</div>
+        <div class="menu-btn" onclick="startBattle(1)">ステージ 1 </div>
+        <div class="menu-btn" onclick="startBattle(2)">ステージ 2 </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
@@ -143,13 +143,13 @@
             <!-- 左：現在の実ステータス値 -->
             <div class="equip-status-panel">
                 <div style="font-weight:bold; color:#00ffff; margin-bottom:8px; border-bottom:1px solid #00ffff;">現在のステータス</div>
-                <div class="status-row"><span>マックス HP:</span><span id="stat-val-hp">0</span></div>
-                <div class="status-row"><span>シールドキャパ:</span><span id="stat-val-shield">0</span></div>
-                <div class="status-row"><span>ベースアタック:</span><span id="stat-val-atk">0</span></div>
-                <div class="status-row"><span>クリティカル レート:</span><span id="stat-val-critRate">0%</span></div>
-                <div class="status-row"><span>クリティカル ダメージ:</span><span id="stat-val-critDmg">0%</span></div>
+                <div class="status-row"><span>最大HP:</span><span id="stat-val-hp">0</span></div>
+                <div class="status-row"><span>シールド耐久値:</span><span id="stat-val-shield">0</span></div>
+                <div class="status-row"><span>攻撃力:</span><span id="stat-val-atk">0</span></div>
+                <div class="status-row"><span>クリティカル率:</span><span id="stat-val-critRate">0%</span></div>
+                <div class="status-row"><span>クリティカルダメージ:</span><span id="stat-val-critDmg">0%</span></div>
                 <div class="status-row"><span>ファイアレート:</span><span id="stat-val-rate">0</span></div>
-                <div class="status-row"><span>スピード:</span><span id="stat-val-speed">0</span></div>
+                <div class="status-row"><span>移動スピード:</span><span id="stat-val-speed">0</span></div>
                 <div class="status-row"><span>マルチショット:</span><span id="stat-val-shot">0</span></div>
             </div>
             
@@ -191,13 +191,13 @@
         <div id="shop-coin" class="coin-display">コイン: 0</div>
         <div class="shop-container">
             <div class="shop-section-title">ステータスアップグレード</div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">マックス HP</div><div id="lv-hp" class="shop-lv">レベル.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">シールドキャパ</div><div id="lv-shield" class="shop-lv">レベル.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">ベースアタック</div><div id="lv-atk" class="shop-lv">レベル.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカル レート (%)</div><div id="lv-critRate" class="shop-lv">レベル.1</div></div><button id="btn-buy-critRate" class="shop-btn" onclick="buyUpgrade('critRate')">60 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカル ダメージ (%)</div><div id="lv-critDmg" class="shop-lv">レベル.1</div></div><button id="btn-buy-critDmg" class="shop-btn" onclick="buyUpgrade('critDmg')">70 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">最大HP</div><div id="lv-hp" class="shop-lv">レベル.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">シールド耐久値</div><div id="lv-shield" class="shop-lv">レベル.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">基礎攻撃力</div><div id="lv-atk" class="shop-lv">レベル.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカル率(%)</div><div id="lv-critRate" class="shop-lv">レベル.1</div></div><button id="btn-buy-critRate" class="shop-btn" onclick="buyUpgrade('critRate')">60 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカルダメージ (%)</div><div id="lv-critDmg" class="shop-lv">レベル.1</div></div><button id="btn-buy-critDmg" class="shop-btn" onclick="buyUpgrade('critDmg')">70 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">ファイアレート</div><div id="lv-rate" class="shop-lv">レベル.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">100 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">スピード</div><div id="lv-speed" class="shop-lv">レベル.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">移動スピード</div><div id="lv-speed" class="shop-lv">レベル.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">マルチショット</div><div id="lv-shot" class="shop-lv">1 バレット</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button></div>
             
             <div class="shop-section-title">ギア購入</div>
@@ -372,7 +372,7 @@
         function updateShopUI() {
             Object.keys(upgrades).forEach(type => {
                 const up = upgrades[type]; const price = getPrice(type); let lvText = "レベル." + up.lv;
-                if (type === 'shot') lvText = up.lv + " ウェイ"; 
+                if (type === 'shot') lvText = up.lv + " way"; 
                 if (type === 'hp') lvText = `レベル.${up.lv} (${4 + up.lv} HP)`; 
                 if (type === 'shield') lvText = `レベル.${up.lv} (${2 + up.lv} シールド)`;
                 if (type === 'critRate') lvText = `レベル.${up.lv} (${10 + (up.lv-1)*5}%)`;
@@ -417,7 +417,7 @@
             document.getElementById('stat-val-critDmg').textContent = getPlayerStat('critDmg') + '%';
             document.getElementById('stat-val-rate').textContent = getPlayerStat('rate');
             document.getElementById('stat-val-speed').textContent = getPlayerStat('speed').toFixed(3);
-            document.getElementById('stat-val-shot').textContent = getPlayerStat('shot') + ' ウェイ';
+            document.getElementById('stat-val-shot').textContent = getPlayerStat('shot') + ' way';
 
             ['item', 'command', 'weapon'].forEach(cat => {
                 const container = document.getElementById(`container-${cat}-slots`); container.innerHTML = "";
