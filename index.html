@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>3D Cyber Shooter - Landscape Edition</title>
+    <title>3D Cyber Shooter - Clean Layout Edition</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #0d0d1a; font-family: 'Helvetica Neue', Arial, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #game-canvas { width: 100vw; height: 100vh; display: block; }
         
-        /* 📱【新設】縦画面のときに横持ちを促すオーバーレイ画面 */
+        /* 📱 縦画面のときに横持ちを促すオーバーレイ画面 */
         #orientation-blocker { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a1a; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: #fff; text-align: center; }
         .rotate-icon { font-size: 50px; margin-bottom: 20px; animation: rotateAnim 2s infinite ease-in-out; }
         @keyframes rotateAnim { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
 
-        /* 縦画面（ポートレート）の時にブロック画面を表示 */
         @media screen and (orientation: portrait) {
             #orientation-blocker { display: flex; }
         }
 
         .menu-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 26, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; }
         .menu-title { font-size: 42px; font-weight: bold; color: #00ff88; text-shadow: 0 0 15px #00ff88; margin-bottom: 20px; letter-spacing: 2px; text-align: center;}
-        .menu-subtitle { font-size: 28px; color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 15px; }
+        .menu-subtitle { font-size: 28px; color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 10px; }
         
         .menu-btn { width: 220px; padding: 10px; margin: 8px; background: rgba(255,255,255,0.03); border: 2px solid #00ffaa; color: #00ffaa; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; text-align: center; transition: all 0.2s; }
         .menu-btn:active { background: rgba(0,255,170,0.3); box-shadow: 0 0 15px #00ffaa; }
@@ -31,46 +30,40 @@
         .user-tag { font-size: 14px; color: #00ff88; font-weight: bold; margin-bottom: 10px; }
         .coin-display { font-size: 18px; color: #ffd700; font-weight: bold; margin-bottom: 15px; }
 
-        .shop-container { display: flex; flex-direction: column; gap: 10px; width: 400px; margin-bottom: 15px; max-height: 50vh; overflow-y: auto; padding-right: 5px; }
-        .shop-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        /* 🛒【修正】横画面の高さ不足対策として max-height を 45vh に絞り、コンテナ自体のマージンを小さく調整 */
+        .shop-container { display: flex; flex-direction: column; gap: 8px; width: 420px; margin-bottom: 8px; max-height: 45vh; overflow-y: auto; padding-right: 5px; }
+        .shop-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { text-align: left; }
-        .shop-name { font-size: 13px; font-weight: bold; color: #00bfff; }
+        .shop-name { font-size: 12px; font-weight: bold; color: #00bfff; }
         .shop-lv { font-size: 11px; color: #8a8aaf; }
-        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px; width: 70px; text-align: center; }
+        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 70px; text-align: center; }
         .shop-btn:disabled { background: #444; color: #888; }
 
-        /* 🕹【左手側】移動ジョイスティック（横持ちに合わせ左下に固定） */
+        /* 移動ジョイスティック */
         .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
         #joystick-handle { width: 45px; height: 45px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
         
-        /* 🕹【右手側】横画面用に最適化されたゲームパット風・逆三角形レイアウト */
+        /* 右手側ゲームパッドUI */
         .action-zone { position: absolute; bottom: 25px; right: 40px; width: 180px; height: 130px; z-index: 10; }
         .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; transition: background 0.1s; }
         
-        /* 💥 メイン攻撃：一番押しやすい中央右寄りに大型配置 */
         #btn-attack { width: 76px; height: 76px; bottom: 10px; right: 0; background: rgba(0, 255, 255, 0.15); border: 2px solid rgba(0, 255, 255, 0.7); color: #00ffff; font-size: 26px; }
-        
-        /* 🛡️ 防御：右下に引っ込めて親指スライドで届く位置に */
         #btn-guard { width: 56px; height: 56px; bottom: 0; left: 20px; background: rgba(30, 144, 255, 0.15); border: 2px solid #1e90ff; color: #1e90ff; font-size: 20px; }
-        
-        /* ⚡️ 雷：右上に配置して誤爆防止 */
         #btn-shock { width: 56px; height: 56px; top: 0; left: 40px; background: rgba(255, 215, 0, 0.15); border: 2px solid #ffd700; color: #ffd700; font-size: 22px; }
         
         .cooldown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; opacity: 0; pointer-events: none; }
 
-        /* 📊【上部インフォ】横画面に合わせて左右に広くセパレート */
-        .ui-container { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 85vw; display: flex; justify-content: space-between; gap: 40px; z-index: 10; pointer-events: none; }
-        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); flex: 1; max-width: 300px; }
-        .hp-label { font-weight: bold; font-size: 11px; margin-bottom: 4px; text-align: left; }
+        /* 📊【変更】プレイヤー専用・最上部コンパクトHPインフォ */
+        .ui-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 280px; z-index: 10; pointer-events: none; }
+        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .hp-label { font-weight: bold; font-size: 10px; margin-bottom: 3px; text-align: left; }
         .player-label { color: #00ff88; }
-        .enemy-label { color: #ff4444; }
-        .hp-bar-bg { width: 100%; height: 8px; background: #111122; border-radius: 4px; overflow: hidden; }
+        .hp-bar-bg { width: 100%; height: 6px; background: #111122; border-radius: 3px; overflow: hidden; }
         .hp-bar-fill { width: 100%; height: 100%; transition: width 0.2s ease; }
         #player-hp-fill { background: linear-gradient(90deg, #00ff88, #00bfff); }
-        #enemy-hp-fill { background: linear-gradient(90deg, #ff4444, #ffaa00); }
-        .info-text { font-size: 10px; color: #8a8aaf; text-align: right; margin-top: 3px; font-weight: bold; }
+        .info-text { font-size: 9px; color: #1e90ff; text-align: right; margin-top: 2px; font-weight: bold; }
 
-        #lock-ui { position: absolute; top: 85px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
+        #lock-ui { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -125,6 +118,7 @@
             <div class="shop-item"><div class="shop-info"><div class="shop-name">MULTI SHOT</div><div id="lv-shot" class="shop-lv">1 BULLET</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">E-SHOCK POWER</div><div id="lv-shock" class="shop-lv">LV.1</div></div><button id="btn-buy-shock" class="shop-btn" onclick="buyUpgrade('shock')">150 C</button></div>
         </div>
+        <!-- 🛒 ここが半分はみ出ていたボタンです。上部の縮小により100%安全に表示されます -->
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">BACK</div>
     </div>
 
@@ -144,22 +138,17 @@
     <!-- ゲーム内UIコンテナ -->
     <div id="ingame-ui" style="display:none;">
         <div class="ui-container">
+            <!-- 📊 プレイヤーのHPとシールドのみ、最上部にジャストフィット表示 -->
             <div class="hp-group">
                 <div class="hp-label player-label">PLAYER OVERDRIVE</div>
                 <div class="hp-bar-bg"><div id="player-hp-fill" class="hp-bar-fill"></div></div>
-                <div id="shield-status" class="info-text" style="color:#1e90ff;">SHIELD: 3 / 3</div>
-            </div>
-            <div class="hp-group">
-                <div class="hp-label enemy-label">TARGETS INTEGRITY</div>
-                <div class="hp-bar-bg"><div id="enemy-hp-fill" class="hp-bar-fill"></div></div>
-                <div id="enemy-count-status" class="info-text" style="color:#ff4444;">ALIVE: 0</div>
+                <div id="shield-status" class="info-text">SHIELD: 3 / 3</div>
             </div>
         </div>
         <div id="lock-ui">LOCK ON ACTIVE</div>
         
         <div id="joystick-container" class="controls"><div id="joystick-handle"></div></div>
         
-        <!-- 🎮 新・横画面レイアウト（逆三角形型） -->
         <div class="action-zone">
             <div id="btn-shock" class="btn-action">⚡️<div id="shock-cooldown-overlay" class="cooldown-overlay">0.0</div></div>
             <div id="btn-guard" class="btn-action">🛡️</div>
@@ -169,7 +158,6 @@
 
     <script>
     //<![CDATA[
-        const SAVE_KEY = 'CyberBattleSaveData';
         let currentPilotName = "GUEST_PLAYER";
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
         
@@ -331,8 +319,7 @@
 
         function updateInGameUI() {
             document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%'; document.getElementById('shield-status').textContent = isShieldBroken ? "CRASHED" : `SHIELD: ${shieldHP}/${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
-            const totalMax = enemies.length * 5; let currentTotal = 0; let aliveCount = 0; enemies.forEach(e => { if(e.hp > 0) { currentTotal += e.hp; aliveCount++; } });
-            document.getElementById('enemy-hp-fill').style.width = totalMax > 0 ? (currentTotal / totalMax) * 100 + '%' : '0%'; document.getElementById('enemy-count-status').textContent = `ALIVE: ${aliveCount}`; document.getElementById('lock-ui').style.display = lockedEnemyIndex !== -1 ? 'block' : 'none';
+            document.getElementById('lock-ui').style.display = lockedEnemyIndex !== -1 ? 'block' : 'none';
         }
 
         function endBattle(isWin) {
