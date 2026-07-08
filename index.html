@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>3D Cyber Shooter - Fixed Shoot Edition</title>
+    <title>3D Cyber Shooter - Command Battle Edition</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #0d0d1a; font-family: 'Helvetica Neue', Arial, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #game-canvas { width: 100vw; height: 100vh; display: block; }
         
-        /* 📱 縦画面のときに横持ちを促すオーバーレイ画面 */
+        /* 📱 縦画面警告 */
         #orientation-blocker { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a1a; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: #fff; text-align: center; }
         .rotate-icon { font-size: 50px; margin-bottom: 20px; animation: rotateAnim 2s infinite ease-in-out; }
         @keyframes rotateAnim { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+        @media screen and (orientation: portrait) { #orientation-blocker { display: flex; } }
 
-        @media screen and (orientation: portrait) {
-            #orientation-blocker { display: flex; }
-        }
-
+        /* UIスクリーン */
         .menu-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 26, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; }
         .menu-title { font-size: 42px; font-weight: bold; color: #00ff88; text-shadow: 0 0 15px #00ff88; margin-bottom: 20px; letter-spacing: 2px; text-align: center;}
         .menu-subtitle { font-size: 28px; color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 10px; }
@@ -30,47 +28,51 @@
         .user-tag { font-size: 14px; color: #00ff88; font-weight: bold; margin-bottom: 10px; }
         .coin-display { font-size: 18px; color: #ffd700; font-weight: bold; margin-bottom: 15px; }
 
-        .shop-container { display: flex; flex-direction: column; gap: 8px; width: 420px; margin-bottom: 8px; max-height: 45vh; overflow-y: auto; padding-right: 5px; }
+        .shop-container { display: flex; flex-direction: column; gap: 8px; width: 440px; margin-bottom: 8px; max-height: 55vh; overflow-y: auto; padding-right: 5px; }
+        .shop-section-title { font-size: 14px; color: #00ffff; font-weight: bold; text-align: left; margin-top: 5px; border-left: 3px solid #00ffff; padding-left: 6px; }
         .shop-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { text-align: left; }
         .shop-name { font-size: 12px; font-weight: bold; color: #00bfff; }
         .shop-lv { font-size: 11px; color: #8a8aaf; }
-        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 70px; text-align: center; }
+        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 85px; text-align: center; }
         .shop-btn:disabled { background: #444; color: #888; }
 
         /* 移動ジョイスティック */
         .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
         #joystick-handle { width: 45px; height: 45px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
         
-        /* 右手側ゲームパッドUI */
+        /* アクションゲームパッド */
         .action-zone { position: absolute; bottom: 25px; right: 40px; width: 180px; height: 150px; z-index: 10; }
-        .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; transition: background 0.1s; }
+        .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; z-index: 12; }
         
-        /* 💥 メイン攻撃 */
         #btn-attack { width: 76px; height: 76px; bottom: 0; right: 0; background: rgba(0, 255, 255, 0.15); border: 2px solid rgba(0, 255, 255, 0.7); color: #00ffff; font-size: 26px; }
-        
-        /* 🎯 ロックオンボタン */
-        #btn-lockon { width: 48px; height: 48px; bottom: 84px; right: 14px; background: rgba(0, 255, 170, 0.15); border: 2px solid #00ffaa; color: #00ffaa; font-size: 18px; box-shadow: 0 0 8px rgba(0, 255, 170, 0.2); }
-        
-        /* 🛡️ 防御 */
+        #btn-lockon { width: 48px; height: 48px; bottom: 84px; right: 14px; background: rgba(0, 255, 170, 0.15); border: 2px solid #00ffaa; color: #00ffaa; font-size: 18px; pointer-events: auto; }
         #btn-guard { width: 56px; height: 56px; bottom: 0; left: 20px; background: rgba(30, 144, 255, 0.15); border: 2px solid #1e90ff; color: #1e90ff; font-size: 20px; }
-        
-        /* ⚡️ 雷 */
         #btn-shock { width: 56px; height: 56px; top: 0; left: 40px; background: rgba(255, 215, 0, 0.15); border: 2px solid #ffd700; color: #ffd700; font-size: 22px; }
-        
-        .cooldown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; opacity: 0; pointer-events: none; }
 
-        /* 📊 プレイヤー専用・最上部コンパクトHPインフォ */
+        /* 📊 HP/CPインフォ */
         .ui-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 280px; z-index: 10; pointer-events: none; }
-        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); }
-        .hp-label { font-weight: bold; font-size: 10px; margin-bottom: 3px; text-align: left; }
+        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .hp-label { font-weight: bold; font-size: 10px; margin-bottom: 2px; text-align: left; }
         .player-label { color: #00ff88; }
-        .hp-bar-bg { width: 100%; height: 6px; background: #111122; border-radius: 3px; overflow: hidden; }
-        .hp-bar-fill { width: 100%; height: 100%; transition: width 0.2s ease; }
+        .hp-bar-bg { width: 100%; height: 6px; background: #111122; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+        .hp-bar-fill { width: 100%; height: 100%; transition: width 0.1s ease; }
         #player-hp-fill { background: linear-gradient(90deg, #00ff88, #00bfff); }
+        #player-cp-fill { background: linear-gradient(90deg, #ffd700, #ff8800); }
         .info-text { font-size: 9px; color: #1e90ff; text-align: right; margin-top: 2px; font-weight: bold; }
 
-        #lock-ui { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
+        #lock-ui { position: absolute; top: 85px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
+
+        /* ⚡️ コマンドセレクトメニュー (戦闘中のポップアップ) */
+        #command-menu { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 15, 0.85); z-index: 200; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .command-window { background: #0c0c24; border: 2px solid #ffd700; width: 320px; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        .command-item-btn { width: 100%; padding: 12px; margin: 6px 0; background: rgba(255,215,0,0.05); border: 1px solid #ffd700; color: #ffd700; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; font-size: 13px; }
+        .command-item-btn:disabled { border-color: #444; color: #666; background: none; cursor: not-allowed; }
+        .command-item-btn:not(:disabled):active { background: rgba(255,215,0,0.2); }
+
+        /* ダメージ表示用テキストスタイル (3D変換用CSS) */
+        .damage-indicator { position: absolute; font-family: 'Impact', sans-serif; font-weight: bold; pointer-events: none; z-index: 50; text-shadow: 0 0 4px #000; transform: translate(-50%, -50%); animation: damageAnim 0.6s forwards ease-out; }
+        @keyframes damageAnim { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 15% { transform: translate(-50%, -80%) scale(1.2); } 100% { transform: translate(-50%, -130%) scale(1.0); opacity: 0; } }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -78,15 +80,15 @@
 
     <div id="orientation-blocker">
         <div class="rotate-icon">🔄</div>
-        <div style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">画面を横向きにしてください</div>
-        <div style="font-size: 12px; color: #8a8aaf; margin-top: 8px;">Please rotate your device to landscape</div>
+        <div style="font-size: 18px; font-weight: bold;">画面を横向きにしてください</div>
     </div>
 
     <canvas id="game-canvas"></canvas>
+    <div id="damage-container" style="position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%;"></div>
 
     <div id="login-screen" class="menu-screen">
         <div class="menu-title">CYBER BATTLE</div>
-        <div style="font-size: 13px; color: #8a8aaf; margin-bottom: 15px; letter-spacing: 1px;">ENTER YOUR PILOT NAME</div>
+        <div style="font-size: 13px; color: #8a8aaf; margin-bottom: 15px;">ENTER YOUR PILOT NAME</div>
         <input type="text" id="username-input" class="login-input" placeholder="GUEST_PLAYER" maxlength="12" />
         <div class="menu-btn" onclick="loginAndStart()">LAUNCH GAME</div>
     </div>
@@ -97,7 +99,7 @@
         <div id="main-coin" class="coin-display">COIN: 0</div>
         <div style="display: flex; gap: 10px;">
             <div class="menu-btn" style="width:140px;" onclick="switchScreen('stage-select')">PLAY</div>
-            <div class="menu-btn" style="width:140px;" onclick="switchScreen('status-shop')">STATUS</div>
+            <div class="menu-btn" style="width:140px;" onclick="switchScreen('status-shop')">SHOP</div>
             <div class="menu-btn" style="width:140px;" onclick="switchScreen('option-menu')">OPTION</div>
         </div>
         <div class="menu-btn back-btn" onclick="logout()" style="font-size:12px; width:100px; margin-top:15px; padding: 6px;">LOGOUT</div>
@@ -111,16 +113,22 @@
     </div>
 
     <div id="status-shop" class="menu-screen" style="display:none;">
-        <div class="menu-subtitle">UPGRADE STATUS</div>
+        <div class="menu-subtitle">CYBER SHOP</div>
         <div id="shop-coin" class="coin-display">COIN: 0</div>
         <div class="shop-container">
+            <div class="shop-section-title">STATUS UPGRADE</div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">MAX HP</div><div id="lv-hp" class="shop-lv">LV.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">SHIELD CAPACITY</div><div id="lv-shield" class="shop-lv">LV.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">ATTACK POWER</div><div id="lv-atk" class="shop-lv">LV.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">CRITICAL RATE (%)</div><div id="lv-critRate" class="shop-lv">LV.1 (10%)</div></div><button id="btn-buy-critRate" class="shop-btn" onclick="buyUpgrade('critRate')">60 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">CRITICAL DAMAGE (%)</div><div id="lv-critDmg" class="shop-lv">LV.1 (150%)</div></div><button id="btn-buy-critDmg" class="shop-btn" onclick="buyUpgrade('critDmg')">70 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">FIRE RATE</div><div id="lv-rate" class="shop-lv">LV.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">100 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">MOVE SPEED</div><div id="lv-speed" class="shop-lv">LV.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button></div>
             <div class="shop-item"><div class="shop-info"><div class="shop-name">MULTI SHOT</div><div id="lv-shot" class="shop-lv">1 BULLET</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">E-SHOCK POWER</div><div id="lv-shock" class="shop-lv">LV.1</div></div><button id="btn-buy-shock" class="shop-btn" onclick="buyUpgrade('shock')">150 C</button></div>
+            
+            <div class="shop-section-title">ACQUIRE SKILL COMMANDS</div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">⚡️ CROSS LASER</div><div id="unl-laser" class="shop-lv">NOT OWNED</div></div><button id="btn-buy-laser" class="shop-btn" onclick="buyUpgrade('cmd_laser')">180 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">🔥 GIGA BLAST</div><div id="unl-blast" class="shop-lv">NOT OWNED</div></div><button id="btn-buy-blast" class="shop-btn" onclick="buyUpgrade('cmd_blast')">250 C</button></div>
         </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">BACK</div>
     </div>
@@ -138,11 +146,22 @@
         <div class="menu-btn" onclick="backToMenu()">RETURN TO MENU</div>
     </div>
 
+    <div id="command-menu">
+        <div class="command-window">
+            <div style="font-size:18px; font-weight:bold; color:#ffd700; margin-bottom:4px;">COMMAND SELECT</div>
+            <div id="command-current-cp" style="font-size:12px; color:#aaa; margin-bottom:15px;">CP: 0 / 100</div>
+            <div id="command-list-container"></div>
+            <button class="menu-btn back-btn" style="width:100%; margin-top:12px; border-radius:6px; font-size:14px;" onclick="closeCommandMenu()">CANCEL</button>
+        </div>
+    </div>
+
     <div id="ingame-ui" style="display:none;">
         <div class="ui-container">
             <div class="hp-group">
                 <div class="hp-label player-label">PLAYER OVERDRIVE</div>
                 <div class="hp-bar-bg"><div id="player-hp-fill" class="hp-bar-fill"></div></div>
+                <div class="hp-label" style="color:#ffd700;">COMMAND POINT</div>
+                <div class="hp-bar-bg"><div id="player-cp-fill" class="hp-bar-fill"></div></div>
                 <div id="shield-status" class="info-text">SHIELD: 3 / 3</div>
             </div>
         </div>
@@ -151,9 +170,9 @@
         <div id="joystick-container" class="controls"><div id="joystick-handle"></div></div>
         
         <div class="action-zone">
-            <div id="btn-shock" class="btn-action">⚡️<div id="shock-cooldown-overlay" class="cooldown-overlay">0.0</div></div>
+            <div id="btn-shock" class="btn-action" onclick="openCommandMenu()">⚡️</div>
             <div id="btn-guard" class="btn-action">🛡️</div>
-            <div id="btn-lockon" class="btn-action" onclick="toggleClosestLockOn()">🎯</div>
+            <div id="btn-lockon" class="btn-action">🎯</div>
             <div id="btn-attack" class="btn-action">💥</div>
         </div>
     </div>
@@ -164,13 +183,16 @@
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
         
         let upgrades = {
-            hp:    { lv: 1, max: 5,  basePrice: 40,  scale: 1.5 },
-            shield:{ lv: 1, max: 5,  basePrice: 60,  scale: 1.5 },
-            atk:   { lv: 1, max: 5,  basePrice: 50,  scale: 1.5 },
-            rate:  { lv: 1, max: 5,  basePrice: 100, scale: 1.6 },
-            speed: { lv: 1, max: 5,  basePrice: 75,  scale: 1.4 },
-            shot:  { lv: 1, max: 3,  basePrice: 300, scale: 2.0 },
-            shock: { lv: 1, max: 5,  basePrice: 150, scale: 1.6 }
+            hp:        { lv: 1, max: 5, basePrice: 40,  scale: 1.5 },
+            shield:    { lv: 1, max: 5, basePrice: 60,  scale: 1.5 },
+            atk:       { lv: 1, max: 5, basePrice: 50,  scale: 1.5 },
+            critRate:  { lv: 1, max: 5, basePrice: 60,  scale: 1.5 }, // +5%毎 (初期10%)
+            critDmg:   { lv: 1, max: 5, basePrice: 70,  scale: 1.5 }, // +25%毎 (初期150%)
+            rate:      { lv: 1, max: 5, basePrice: 100, scale: 1.6 },
+            speed:     { lv: 1, max: 5, basePrice: 75,  scale: 1.4 },
+            shot:      { lv: 1, max: 3, basePrice: 300, scale: 2.0 },
+            cmd_laser: { lv: 0, max: 1, basePrice: 180, scale: 1.0 }, // 購入フラグ
+            cmd_blast: { lv: 0, max: 1, basePrice: 250, scale: 1.0 }  // 購入フラグ
         };
 
         function loginAndStart() {
@@ -183,17 +205,18 @@
             switchScreen('main-menu');
         }
         function logout() { document.getElementById('username-input').value = ""; document.getElementById('main-menu').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; }
+        
         function saveGame() {
             const saveKey = 'CyberBattle_' + currentPilotName;
-            const data = { coins: globalCoins, lv_hp: upgrades.hp.lv, lv_shield: upgrades.shield.lv, lv_atk: upgrades.atk.lv, lv_rate: upgrades.rate.lv, lv_speed: upgrades.speed.lv, lv_shot: upgrades.shot.lv, lv_shock: upgrades.shock.lv };
+            const data = { coins: globalCoins, lv_hp: upgrades.hp.lv, lv_shield: upgrades.shield.lv, lv_atk: upgrades.atk.lv, lv_critRate: upgrades.critRate.lv, lv_critDmg: upgrades.critDmg.lv, lv_rate: upgrades.rate.lv, lv_speed: upgrades.speed.lv, lv_shot: upgrades.shot.lv, unl_laser: upgrades.cmd_laser.lv, unl_blast: upgrades.cmd_blast.lv };
             localStorage.setItem(saveKey, JSON.stringify(data));
         }
         function loadGame(pilotName) {
-            Object.keys(upgrades).forEach(k => upgrades[k].lv = 1); globalCoins = 0;
+            Object.keys(upgrades).forEach(k => upgrades[k].lv = (k.startsWith('cmd_') ? 0 : 1)); globalCoins = 0;
             const saveKey = 'CyberBattle_' + pilotName; const saved = localStorage.getItem(saveKey);
             if (saved) {
                 const data = JSON.parse(saved); globalCoins = data.coins || 0;
-                if(data.lv_hp) upgrades.hp.lv = data.lv_hp; if(data.lv_shield) upgrades.shield.lv = data.lv_shield; if(data.lv_atk) upgrades.atk.lv = data.lv_atk; if(data.lv_rate) upgrades.rate.lv = data.lv_rate; if(data.lv_speed) upgrades.speed.lv = data.lv_speed; if(data.lv_shot) upgrades.shot.lv = data.lv_shot; if(data.lv_shock) upgrades.shock.lv = data.lv_shock;
+                if(data.lv_hp) upgrades.hp.lv = data.lv_hp; if(data.lv_shield) upgrades.shield.lv = data.lv_shield; if(data.lv_atk) upgrades.atk.lv = data.lv_atk; if(data.lv_critRate) upgrades.critRate.lv = data.lv_critRate; if(data.lv_critDmg) upgrades.critDmg.lv = data.lv_critDmg; if(data.lv_rate) upgrades.rate.lv = data.lv_rate; if(data.lv_speed) upgrades.speed.lv = data.lv_speed; if(data.lv_shot) upgrades.shot.lv = data.lv_shot; if(data.unl_laser) upgrades.cmd_laser.lv = data.unl_laser; if(data.unl_blast) upgrades.cmd_blast.lv = data.unl_blast;
             }
         }
         function resetProgress() { if(confirm(`パイロット「${currentPilotName}」のデータを初期化します。よろしいですか？`)) { localStorage.removeItem('CyberBattle_' + currentPilotName); logout(); location.reload(); } }
@@ -206,6 +229,7 @@
             if (type === 'shoot') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12); } 
             else if (type === 'shock') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(600, now + 0.3); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); } 
             else if (type === 'hit') { osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now); osc.frequency.linearRampToValueAtTime(40, now + 0.08); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
+            else if (type === 'crit') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(800, now + 0.15); gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.15); osc.start(now); osc.stop(now + 0.15); }
             else if (type === 'guard') { osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(400, now + 0.08); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
             else if (type === 'clear') { osc.type = 'square'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08); osc.frequency.setValueAtTime(784, now + 0.16); osc.frequency.setValueAtTime(1046, now + 0.24); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.5); osc.start(now); osc.stop(now + 0.5); } 
             else if (type === 'gameover') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(250, now); osc.frequency.linearRampToValueAtTime(50, now + 0.4); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); }
@@ -222,17 +246,32 @@
             document.getElementById(screenId).style.display = 'flex'; document.getElementById('main-coin').textContent = "COIN: " + globalCoins; document.getElementById('shop-coin').textContent = "COIN: " + globalCoins;
             if (screenId === 'status-shop') updateShopUI();
         }
-        function getPrice(type) { const up = upgrades[type]; return Math.floor(up.basePrice * Math.pow(up.scale, up.lv - 1)); }
+        function getPrice(type) { const up = upgrades[type]; return Math.floor(up.basePrice * Math.pow(up.scale, up.lv - (type.startsWith('cmd_') ? 0 : 1))); }
+        
         function updateShopUI() {
             Object.keys(upgrades).forEach(type => {
                 const up = upgrades[type]; const price = getPrice(type); let lvText = "LV." + up.lv;
-                if (type === 'shot') lvText = up.lv + " WAY"; if (type === 'hp') lvText = `LV.${up.lv} (${4 + up.lv} HP)`; if (type === 'shield') lvText = `LV.${up.lv} (${2 + up.lv} GUARD)`;
-                document.getElementById('lv-' + type).textContent = lvText + (up.lv >= up.max ? " (MAX)" : "");
-                const btn = document.getElementById('btn-buy-' + type); if (up.lv >= up.max) { btn.textContent = "MAX"; btn.disabled = true; } else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
+                if (type === 'shot') lvText = up.lv + " WAY"; 
+                if (type === 'hp') lvText = `LV.${up.lv} (${4 + up.lv} HP)`; 
+                if (type === 'shield') lvText = `LV.${up.lv} (${2 + up.lv} GUARD)`;
+                if (type === 'critRate') lvText = `LV.${up.lv} (${10 + (up.lv-1)*5}%)`;
+                if (type === 'critDmg') lvText = `LV.${up.lv} (${150 + (up.lv-1)*25}%)`;
+                
+                if (type.startsWith('cmd_')) {
+                    const elId = type === 'cmd_laser' ? 'unl-laser' : 'unl-blast';
+                    document.getElementById(elId).textContent = up.lv > 0 ? "OWNED" : "NOT OWNED";
+                    const btn = document.getElementById(type === 'cmd_laser' ? 'btn-buy-laser' : 'btn-buy-blast');
+                    if (up.lv > 0) { btn.textContent = "BOUGHT"; btn.disabled = true; }
+                    else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
+                } else {
+                    document.getElementById('lv-' + type).textContent = lvText + (up.lv >= up.max ? " (MAX)" : "");
+                    const btn = document.getElementById('btn-buy-' + type); if (up.lv >= up.max) { btn.textContent = "MAX"; btn.disabled = true; } else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
+                }
             });
         }
-        function buyUpgrade(type) { const price = getPrice(type); if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); saveGame(); switchScreen('status-shop'); } }
+        function buyUpgrade(type) { const price = getPrice(type); if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); saveGame(); updateShopUI(); document.getElementById('main-coin').textContent = "COIN: " + globalCoins; document.getElementById('shop-coin').textContent = "COIN: " + globalCoins; } }
 
+        // --- Three.js Setup ---
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0e0e1a);
         const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
         const canvas = document.getElementById('game-canvas');
@@ -273,52 +312,62 @@
         camera.position.set(0, 5, 7); camera.lookAt(player.position);
 
         const clock = new THREE.Clock(); const TIME_SCALE = 60;
-        let activeBattle = false; let playerHP = 5; let maxPlayerHP = 5; let shieldHP = 3; let maxShieldHP = 3; let isShieldBroken = false; let isGuarding = false; let lockedEnemyIndex = -1;
-        const enemies = []; const bullets = []; let playerAttackCooldown = 0; let playerShockCooldown = 0; const MAX_SHOCK_COOLDOWN = 90; let shockVisualTimer = 0;
+        let activeBattle = false; let isCommandPaused = false;
+        let playerHP = 5; let maxPlayerHP = 5; let playerCP = 0; let maxPlayerCP = 100;
+        let shieldHP = 3; let maxShieldHP = 3; let isShieldBroken = false; let isGuarding = false; let lockedEnemyIndex = -1;
+        const enemies = []; const bullets = []; const damageTexts = [];
+        let playerAttackCooldown = 0; let shockVisualTimer = 0; let playerRotation = 0;
 
+        // 🎯 独立したロックオン切り替え関数（移動中も完全対応）
         function toggleClosestLockOn() {
-            if (!activeBattle) return;
+            if (!activeBattle || isCommandPaused) return;
             initAudio();
-
-            if (lockedEnemyIndex !== -1) {
-                lockedEnemyIndex = -1;
-                updateInGameUI();
-                return;
-            }
-
-            let minDistance = Infinity;
-            let closestIndex = -1;
-
+            if (lockedEnemyIndex !== -1) { lockedEnemyIndex = -1; updateInGameUI(); return; }
+            let minDistance = Infinity; let closestIndex = -1;
             for (let i = 0; i < enemies.length; i++) {
                 if (enemies[i].hp <= 0) continue;
                 const dist = player.position.distanceTo(enemies[i].mesh.position);
-                if (dist < minDistance) {
-                    minDistance = dist;
-                    closestIndex = i;
-                }
+                if (dist < minDistance) { minDistance = dist; closestIndex = i; }
             }
-
-            if (closestIndex !== -1) {
-                lockedEnemyIndex = closestIndex;
-                playSound('guard');
-            }
+            if (closestIndex !== -1) { lockedEnemyIndex = closestIndex; playSound('guard'); }
             updateInGameUI();
         }
 
         function getPlayerStat(type) {
-            const up = upgrades[type]; if (type === 'hp') return 4 + up.lv; if (type === 'shield') return 2 + up.lv; if (type === 'atk') return up.lv; if (type === 'rate') return Math.max(8, 26 - up.lv * 4); if (type === 'speed') return 0.04 + up.lv * 0.01; if (type === 'shot') return up.lv; if (type === 'shock') return up.lv * 2; return 1;
+            const up = upgrades[type]; 
+            if (type === 'hp') return 4 + up.lv; 
+            if (type === 'shield') return 2 + up.lv; 
+            if (type === 'atk') return up.lv; 
+            if (type === 'critRate') return 10 + (up.lv - 1) * 5; // %
+            if (type === 'critDmg') return 150 + (up.lv - 1) * 25; // %
+            if (type === 'rate') return Math.max(8, 26 - up.lv * 4); 
+            if (type === 'speed') return 0.04 + up.lv * 0.01; 
+            if (type === 'shot') return up.lv; 
+            return 1;
         }
 
-        function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null) {
-            const bMesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), new THREE.MeshBasicMaterial({ color: isPlayer ? 0x00ffff : 0xff3333 }));
+        // 💥 ダメージ表示ポップアップ生成
+        function createDamageText(position, amount, isCrit) {
+            const container = document.getElementById('damage-container');
+            const el = document.createElement('div');
+            el.className = 'damage-indicator';
+            el.style.color = isCrit ? '#ff3333' : '#00ffff';
+            el.style.fontSize = isCrit ? '22px' : '16px';
+            el.textContent = amount + (isCrit ? '!!' : '');
+            container.appendChild(el);
+            damageTexts.push({ element: el, pos3D: position.clone().add(new THREE.Vector3((Math.random()-0.5)*0.4, 1.3, (Math.random()-0.5)*0.4)), age: 0 });
+        }
+
+        function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null, size = 0.15, damageOverride = null) {
+            const bMesh = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshBasicMaterial({ color: isPlayer ? (size > 0.3 ? '#ffaa00' : 0x00ffff) : 0xff3333 }));
             if (isPlayer) {
                 const offsetX = -0.55 * Math.cos(playerRotation) - (-0.62) * Math.sin(playerRotation); const offsetZ = -0.55 * Math.sin(playerRotation) + (-0.62) * Math.cos(playerRotation); bMesh.position.set(player.position.x + offsetX, 0.65, player.position.z + offsetZ);
             } else { bMesh.position.set(startX, 0.65, startZ); }
-            scene.add(bMesh); bullets.push({ mesh: bMesh, dirX: dirX, dirZ: dirZ, isPlayer: isPlayer, target: targetEnemyMesh, life: 180 });
+            scene.add(bMesh); bullets.push({ mesh: bMesh, dirX: dirX, dirZ: dirZ, isPlayer: isPlayer, target: targetEnemyMesh, life: 180, damage: damageOverride });
         }
 
         function playerShoot() {
-            if (!activeBattle || playerAttackCooldown > 0 || isGuarding) return;
+            if (!activeBattle || isCommandPaused || playerAttackCooldown > 0 || isGuarding) return;
             const bdx = -Math.sin(playerRotation); const bdz = -Math.cos(playerRotation); const targetMesh = (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex]) ? enemies[lockedEnemyIndex].mesh : null; const ways = getPlayerStat('shot');
             playSound('shoot');
             if (ways === 1) { spawnBullet(player.position.x, player.position.z, bdx, bdz, true, targetMesh); } 
@@ -329,27 +378,88 @@
             playerAttackCooldown = getPlayerStat('rate');
         }
 
-        function triggerElectricShock() {
-            if (!activeBattle || playerShockCooldown > 0 || isGuarding) return;
-            playSound('shock'); playerShockCooldown = MAX_SHOCK_COOLDOWN; shockVisualTimer = 15;
-            const shockRadius = 3.0; const shockDamage = getPlayerStat('shock');
-            enemies.forEach((e, idx) => {
-                if (e.hp <= 0) return;
-                if (player.position.distanceTo(e.mesh.position) <= shockRadius) { e.hp -= shockDamage; e.mesh.position.x += (e.mesh.position.x - player.position.x) * 0.4; e.mesh.position.z += (e.mesh.position.z - player.position.z) * 0.4; if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === idx) lockedEnemyIndex = -1; } }
+        // ⚡️ コマンドシステム処理
+        function openCommandMenu() {
+            if (!activeBattle || isCommandPaused) return;
+            initAudio();
+            isCommandPaused = true; // 画面を静止
+            document.getElementById('command-current-cp').textContent = `CP: ${playerCP} / ${maxPlayerCP}`;
+            const container = document.getElementById('command-list-container');
+            container.innerHTML = "";
+
+            const availableCommands = [
+                { id: 'shock', name: '⚡️ E-SHOCK', cp: 30, desc: '周囲の敵に電撃波', owned: true },
+                { id: 'laser', name: '🌐 CROSS LASER', cp: 50, desc: '4方向レーザー貫通弾', owned: upgrades.cmd_laser.lv > 0 },
+                { id: 'blast', name: '🔥 GIGA BLAST', cp: 90, desc: '前方へ超巨大爆破弾', owned: upgrades.cmd_blast.lv > 0 }
+            ];
+
+            availableCommands.forEach(cmd => {
+                if (!cmd.owned) return;
+                const btn = document.createElement('button');
+                btn.className = 'command-item-btn';
+                btn.disabled = playerCP < cmd.cp;
+                btn.innerHTML = `<span>${cmd.name}<br><small style="color:#8a8aaf; font-weight:normal;">${cmd.desc}</small></span> <span style="color:${playerCP>=cmd.cp?'#ffd700':'#666'}">${cmd.cp} CP</span>`;
+                btn.onclick = () => { executeCommand(cmd.id, cmd.cp); closeCommandMenu(); };
+                container.appendChild(btn);
             });
+
+            document.getElementById('command-menu').style.display = 'flex';
+        }
+
+        function closeCommandMenu() {
+            isCommandPaused = false;
+            document.getElementById('command-menu').style.display = 'none';
+        }
+
+        function executeCommand(id, cpCost) {
+            playerCP -= cpCost;
             updateInGameUI();
+
+            if (id === 'shock') {
+                playSound('shock'); shockVisualTimer = 15; const shockRadius = 3.5;
+                enemies.forEach((e, idx) => {
+                    if (e.hp <= 0) return;
+                    if (player.position.distanceTo(e.mesh.position) <= shockRadius) {
+                        let baseAtk = getPlayerStat('atk') * 2;
+                        let isCrit = Math.random() * 100 < getPlayerStat('critRate');
+                        let finalDmg = isCrit ? Math.floor(baseAtk * getPlayerStat('critDmg') / 100) : baseAtk;
+                        e.hp -= finalDmg;
+                        createDamageText(e.mesh.position, finalDmg, isCrit);
+                        playSound(isCrit ? 'crit' : 'hit');
+                        e.mesh.position.x += (e.mesh.position.x - player.position.x) * 0.6;
+                        e.mesh.position.z += (e.mesh.position.z - player.position.z) * 0.6;
+                        if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === idx) lockedEnemyIndex = -1; }
+                    }
+                });
+            } 
+            else if (id === 'laser') {
+                playSound('shock');
+                const dirs = [{x:1,z:0},{x:-1,z:0},{x:0,z:1},{x:0,z:-1}];
+                dirs.forEach(d => spawnBullet(player.position.x, player.position.z, d.x, d.z, true, null, 0.25, getPlayerStat('atk') * 2));
+            } 
+            else if (id === 'blast') {
+                playSound('shock');
+                const bdx = -Math.sin(playerRotation); const bdz = -Math.cos(playerRotation);
+                spawnBullet(player.position.x, player.position.z, bdx, bdz, true, null, 0.5, getPlayerStat('atk') * 4);
+            }
         }
 
         function startBattle(stageNum) {
-            currentStage = stageNum; activeBattle = true; maxPlayerHP = getPlayerStat('hp'); playerHP = maxPlayerHP; maxShieldHP = getPlayerStat('shield'); shieldHP = maxShieldHP; isShieldBroken = false; isGuarding = false; lockedEnemyIndex = -1; playerShockCooldown = 0; shockVisualTimer = 0;
+            currentStage = stageNum; activeBattle = true; isCommandPaused = false;
+            maxPlayerHP = getPlayerStat('hp'); playerHP = maxPlayerHP; playerCP = 0;
+            maxShieldHP = getPlayerStat('shield'); shieldHP = maxShieldHP; isShieldBroken = false; isGuarding = false; lockedEnemyIndex = -1; shockVisualTimer = 0;
             player.position.set(0, 0, 0); player.rotation.y = 0; playerRotation = 0; scene.add(player); inputX = 0; inputZ = 0; Object.keys(keyState).forEach(k => keyState[k] = false); enemies.forEach(e => scene.remove(e.mesh)); enemies.length = 0; bullets.forEach(b => scene.remove(b.mesh)); bullets.length = 0;
+            document.getElementById('damage-container').innerHTML = ""; damageTexts.length = 0;
+            
             const count = stageNum === 1 ? 1 : 3;
-            for(let i=0; i<count; i++) { const enemyMesh = createRobot(0xff4444, 0xffaa00, false); const ez = -8 - (i * 2); const ex = (i - (count-1)/2) * 4; enemyMesh.position.set(ex, 0, ez); scene.add(enemyMesh); enemies.push({ mesh: enemyMesh, hp: 5, shootTimer: 40 + Math.random() * 40 }); }
+            for(let i=0; i<count; i++) { const enemyMesh = createRobot(0xff4444, 0xffaa00, false); const ez = -8 - (i * 2); const ex = (i - (count-1)/2) * 4; enemyMesh.position.set(ex, 0, ez); scene.add(enemyMesh); enemies.push({ mesh: enemyMesh, hp: stageNum === 1 ? 6 : 8, shootTimer: 40 + Math.random() * 40 }); }
             document.getElementById('stage-select').style.display = 'none'; document.getElementById('ingame-ui').style.display = 'block'; updateInGameUI(); initAudio(); clock.getDelta();
         }
 
         function updateInGameUI() {
-            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%'; document.getElementById('shield-status').textContent = isShieldBroken ? "CRASHED" : `SHIELD: ${shieldHP}/${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
+            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%';
+            document.getElementById('player-cp-fill').style.width = (playerCP / maxPlayerCP) * 100 + '%';
+            document.getElementById('shield-status').textContent = isShieldBroken ? "CRASHED" : `SHIELD: ${shieldHP}/${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
             document.getElementById('lock-ui').style.display = lockedEnemyIndex !== -1 ? 'block' : 'none';
         }
 
@@ -361,62 +471,94 @@
         }
         function backToMenu() { switchScreen('main-menu'); }
 
+        // --- コントロール（ジョイスティック ＆ ボタン個別のイベント処理） ---
         let inputX = 0; let inputZ = 0; const keyState = { up: false, down: false, left: false, right: false };
         const joystick = document.getElementById('joystick-container'); const handle = document.getElementById('joystick-handle');
         let joystickActive = false; let joystickTouchId = null; let joystickCenterX = 0; let joystickCenterY = 0;
+        
         function calcJoystickCenter() { const r = joystick.getBoundingClientRect(); joystickCenterX = r.left + r.width/2; joystickCenterY = r.top + r.height/2; }
-        joystick.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!activeBattle) return; calcJoystickCenter(); joystickActive = true; joystickTouchId = e.changedTouches[0].identifier; }, { passive: false });
+        
+        joystick.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!activeBattle || isCommandPaused) return; calcJoystickCenter(); joystickActive = true; joystickTouchId = e.changedTouches[0].identifier; }, { passive: false });
+        
         window.addEventListener('touchmove', (e) => {
             if (!joystickActive) return; let t = null; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) { t = e.touches[i]; break; } } if (!t) return;
             let dx = t.clientX - joystickCenterX; let dy = t.clientY - joystickCenterY; const dist = Math.sqrt(dx*dx + dy*dy); if (dist > 50) { dx = (dx/dist)*50; dy = (dy/dist)*50; }
             handle.style.transition = 'none'; handle.style.transform = `translate(${dx}px, ${dy}px)`; inputX = dx / 50; inputZ = dy / 50;
         }, { passive: false });
+        
         const endJoystick = (e) => {
             if (!joystickActive) return; if (e) { let stay = false; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) stay = true; } if(stay) return; }
             joystickActive = false; joystickTouchId = null; handle.style.transition = 'transform 0.15s ease'; handle.style.transform = 'translate(0px, 0px)'; inputX = 0; inputZ = 0;
         };
         window.addEventListener('touchend', endJoystick); window.addEventListener('touchcancel', endJoystick);
+        
+        // 🎯 各ボタンごとの独立したイベントリスナー（移動中の干渉防止に最適）
         document.getElementById('btn-attack').addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); playerShoot(); }, { passive: false });
-        document.getElementById('btn-shock').addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); triggerElectricShock(); }, { passive: false });
+        document.getElementById('btn-lockon').addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); toggleClosestLockOn(); }, { passive: false });
+        
         const gBtn = document.getElementById('btn-guard');
-        gBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!isShieldBroken && activeBattle) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
+        gBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
         gBtn.addEventListener('touchend', () => isGuarding = false);
         
         function updateKeyboard() { if(joystickActive) return; inputX = 0; inputZ = 0; if(keyState.up) inputZ-=1; if(keyState.down) inputZ+=1; if(keyState.left) inputX-=1; if(keyState.right) inputX+=1; const l = Math.sqrt(inputX*inputX + inputZ*inputZ); if(l>0){ inputX/=l; inputZ/=l; } }
         window.addEventListener('keydown', (e) => {
-            initAudio(); if (!activeBattle) return; const k = e.key.toLowerCase();
+            initAudio(); if (!activeBattle || isCommandPaused) return; const k = e.key.toLowerCase();
             if (k === 'w' || e.key === 'ArrowUp') { keyState.up = true; updateKeyboard(); } if (k === 's' || e.key === 'ArrowDown') { keyState.down = true; updateKeyboard(); } if (k === 'a' || e.key === 'ArrowLeft') { keyState.left = true; updateKeyboard(); } if (k === 'd' || e.key === 'ArrowRight') { keyState.right = true; updateKeyboard(); }
-            if (e.code === 'Space') { e.preventDefault(); playerShoot(); } if (k === 'e' || e.key === 'Shift') { e.preventDefault(); triggerElectricShock(); }
+            if (e.code === 'Space') { e.preventDefault(); playerShoot(); } if (k === 'e' || e.key === 'Shift') { e.preventDefault(); openCommandMenu(); }
             if (k === 'q' || k === 'f') { e.preventDefault(); toggleClosestLockOn(); }
         });
         window.addEventListener('keyup', (e) => { const k = e.key.toLowerCase(); if (k === 'w' || e.key === 'ArrowUp') { keyState.up = false; updateKeyboard(); } if (k === 's' || e.key === 'ArrowDown') { keyState.down = false; updateKeyboard(); } if (k === 'a' || e.key === 'ArrowLeft') { keyState.left = false; updateKeyboard(); } if (k === 'd' || e.key === 'ArrowRight') { keyState.right = false; updateKeyboard(); } });
-        window.addEventListener('mousedown', (e) => { initAudio(); if (!activeBattle) return; if (e.button === 2) { if(!isShieldBroken) { playSound('guard'); isGuarding = true; } } else if (e.button === 1) { e.preventDefault(); triggerElectricShock(); } else if (e.button === 0) { checkLockOn(e.clientX, e.clientY); } });
+        
+        // 画面の空き空間クリック判定 (PC用)
+        window.addEventListener('mousedown', (e) => {
+            initAudio(); if (!activeBattle || isCommandPaused) return; 
+            if (e.button === 2) { if(!isShieldBroken) { playSound('guard'); isGuarding = true; } } 
+            else if (e.button === 1) { e.preventDefault(); openCommandMenu(); } 
+            else if (e.button === 0) { check3DSpaceClick(e.clientX, e.clientY); }
+        });
         window.addEventListener('mouseup', (e) => { if (e.button === 2) isGuarding = false; }); window.addEventListener('contextmenu', e => e.preventDefault());
-        window.addEventListener('touchstart', (e) => { if (!activeBattle) return; const t = e.touches[0]; const jR = joystick.getBoundingClientRect(); if (t.clientX < jR.left || t.clientX > jR.right || t.clientY < jR.top || t.clientY > jR.bottom) { checkLockOn(t.clientX, t.clientY); } }, { passive: true });
 
-        // 🎯 空間タップ時の暴発射撃を排除した判定ロジック
-        function checkLockOn(sx, sy) {
+        function check3DSpaceClick(sx, sy) {
             const az = document.querySelector('.action-zone').getBoundingClientRect(); if (sx >= az.left && sx <= az.right && sy >= az.top && sy <= az.bottom) return;
+            const jR = joystick.getBoundingClientRect(); if (sx >= jR.left && sx <= jR.right && sy >= jR.top && sy <= jR.bottom) return;
             mouse.x = (sx / window.innerWidth) * 2 - 1; mouse.y = -(sy / window.innerHeight) * 2 + 1; raycaster.setFromCamera(mouse, camera); let clickedIndex = -1;
             for(let i=0; i<enemies.length; i++) { if(enemies[i].hp <= 0) continue; const hit = raycaster.intersectObjects(enemies[i].mesh.children, true); if (hit.length > 0) { clickedIndex = i; break; } }
-            if (clickedIndex !== -1) { lockedEnemyIndex = (lockedEnemyIndex === clickedIndex) ? -1 : clickedIndex; } 
-            // ❌ ここにあった 「else { playerShoot(); }」（空間タップ時の射撃暴発）を削除しました！
-            updateInGameUI();
+            if (clickedIndex !== -1) { lockedEnemyIndex = (lockedEnemyIndex === clickedIndex) ? -1 : clickedIndex; playSound('guard'); updateInGameUI(); }
         }
 
         const BULLET_SPEED = 0.08; const enemyBulletSpeed = 0.07; const enemyMoveSpeed = 0.015; let hoverTime = 0;
+        
+        // --- メインループ ---
         function animate() {
-            requestAnimationFrame(animate); const dt = clock.getDelta(); const deltaScale = dt * TIME_SCALE;
+            requestAnimationFrame(animate);
+            const dt = clock.getDelta();
+            const deltaScale = isCommandPaused ? 0 : dt * TIME_SCALE; // コマンド選択時は進行を完全に停止
+
+            // ダメージテキストの3D座標追従＆寿命計算 (ポーズ中でも滑らかに動かすためdeltaScaleは使わない)
+            const tempV = new THREE.Vector3();
+            for (let i = damageTexts.length - 1; i >= 0; i--) {
+                const d = damageTexts[i]; d.age += dt;
+                d.pos3D.y += dt * 0.8; // 上昇
+                d.pos3D.project(camera);
+                const x = (d.pos3D.x * .5 + .5) * window.innerWidth;
+                const y = (d.pos3D.y * -.5 + .5) * window.innerHeight;
+                d.element.style.left = x + 'px'; d.element.style.top = y + 'px';
+                if (d.age >= 0.6) { d.element.remove(); damageTexts.splice(i, 1); }
+            }
+
+            if (isCommandPaused) return; // コマンドメニュー表示中は以下の物理・戦闘処理をスキップ
+
             hoverTime += 0.05 * deltaScale; player.position.y = 0.1 * Math.sin(hoverTime);
             hoverEffects.forEach(eff => { eff.scale += 0.02 * deltaScale; eff.opacity -= 0.01 * deltaScale; if (eff.opacity <= 0) { eff.scale = 0.5; eff.opacity = 0.6; } eff.mesh.scale.set(eff.scale, eff.scale, 1); eff.mesh.material.opacity = playerHP > 0 ? eff.opacity : 0; eff.mesh.position.set(player.position.x, 0.02, player.position.z); });
+            
             if (activeBattle) {
                 const curSpeed = (isGuarding ? getPlayerStat('speed') * 0.4 : getPlayerStat('speed')) * deltaScale;
                 if (inputX !== 0 || inputZ !== 0) { player.position.x += inputX * curSpeed; player.position.z += inputZ * curSpeed; playerRotation = Math.atan2(-inputX, -inputZ); player.rotation.y = playerRotation; }
                 if (playerAttackCooldown > 0) { playerAttackCooldown -= deltaScale; if (playerAttackCooldown < 0) playerAttackCooldown = 0; }
-                if (playerShockCooldown > 0) { playerShockCooldown -= deltaScale; if (playerShockCooldown < 0) playerShockCooldown = 0; const seconds = (playerShockCooldown / 60).toFixed(1); document.getElementById('shock-cooldown-overlay').textContent = seconds; document.getElementById('shock-cooldown-overlay').style.opacity = 1; } else { document.getElementById('shock-cooldown-overlay').style.opacity = 0; }
                 if (shockVisualTimer > 0) { shockVisualTimer -= deltaScale; if (shockVisualTimer < 0) shockVisualTimer = 0; shockVisualMesh.material.opacity = (shockVisualTimer / 15) * 0.6; shockVisualMesh.scale.set(1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15)); } else { shockVisualMesh.material.opacity = 0; }
                 shieldMesh.material.opacity = (isGuarding && !isShieldBroken) ? 0.4 : 0; if(isGuarding) shieldMesh.rotation.y += 0.04 * deltaScale;
                 if (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex] && enemies[lockedEnemyIndex].hp > 0) { const targetMesh = enemies[lockedEnemyIndex].mesh; lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z); lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale; } else { lockMarker.material.opacity = 0; lockedEnemyIndex = -1; }
+                
                 let totalEnemyHP = 0;
                 enemies.forEach((e) => {
                     if (e.hp <= 0) return; totalEnemyHP += e.hp;
@@ -425,14 +567,33 @@
                     e.shootTimer -= deltaScale; if (e.shootTimer <= 0) { e.shootTimer = 70 + Math.random() * 40; const erraticAngle = angle + (Math.random() - 0.5) * 0.4; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false); }
                 });
                 if (totalEnemyHP <= 0 && enemies.length > 0) { endBattle(true); return; }
+                
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const b = bullets[i];
                     if (b.isPlayer && b.target && b.target.parent) { const tx = b.target.position.x - b.mesh.position.x; const tz = b.target.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz); if (d > 0.1) { b.dirX = b.dirX * 0.94 + (tx / d) * 0.06; b.dirZ = b.dirZ * 0.94 + (tz / d) * 0.06; const bl = Math.sqrt(b.dirX*b.dirX + b.dirZ*b.dirZ); b.dirX /= bl; b.dirZ /= bl; } }
                     const bSpd = (b.isPlayer ? BULLET_SPEED : enemyBulletSpeed) * deltaScale; b.mesh.position.x += b.dirX * bSpd; b.mesh.position.z += b.dirZ * bSpd; b.life -= deltaScale; let removed = false;
+                    
                     if (b.isPlayer) {
                         for (let j = 0; j < enemies.length; j++) {
                             const e = enemies[j]; if (e.hp <= 0) continue;
-                            if (b.mesh.position.distanceTo(e.mesh.position) < 0.8) { e.hp -= getPlayerStat('atk'); playSound('hit'); e.mesh.position.x += b.dirX * 0.3 * deltaScale; e.mesh.position.z += b.dirZ * 0.3 * deltaScale; if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === j) lockedEnemyIndex = -1; } scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); break; }
+                            if (b.mesh.position.distanceTo(e.mesh.position) < 0.8) {
+                                // 🎲 クリティカル判定 & ダメージ計算
+                                let isCrit = Math.random() * 100 < getPlayerStat('critRate');
+                                let baseDmg = b.damage !== null ? b.damage : getPlayerStat('atk');
+                                let finalDmg = isCrit ? Math.floor(baseDmg * getPlayerStat('critDmg') / 100) : baseDmg;
+                                
+                                e.hp -= finalDmg;
+                                playerCP = Math.min(maxPlayerCP, playerCP + 5); // CP加算
+                                
+                                createDamageText(e.mesh.position, finalDmg, isCrit);
+                                playSound(isCrit ? 'crit' : 'hit');
+                                
+                                e.mesh.position.x += b.dirX * (isCrit ? 0.6 : 0.3) * deltaScale;
+                                e.mesh.position.z += b.dirZ * (isCrit ? 0.6 : 0.3) * deltaScale;
+                                
+                                if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === j) lockedEnemyIndex = -1; }
+                                scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); break;
+                            }
                         }
                     } else {
                         if (playerHP > 0 && b.mesh.position.distanceTo(player.position) < 0.8) { if (isGuarding && !isShieldBroken) { shieldHP--; playSound('guard'); if (shieldHP <= 0) { isShieldBroken = true; isGuarding = false; } } else { playerHP--; playSound('hit'); if (playerHP <= 0) { scene.remove(player); endBattle(false); return; } } scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); }
