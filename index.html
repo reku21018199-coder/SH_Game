@@ -2,81 +2,108 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>3D Cyber Shooter - Multi-Account Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>3D Cyber Shooter - Landscape Edition</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #0d0d1a; font-family: 'Helvetica Neue', Arial, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
         #game-canvas { width: 100vw; height: 100vh; display: block; }
         
-        .menu-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 26, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; transition: opacity 0.3s ease; }
-        .menu-title { font-size: 42px; font-weight: bold; color: #00ff88; text-shadow: 0 0 15px #00ff88; margin-bottom: 30px; letter-spacing: 2px; text-align: center;}
-        .menu-subtitle { font-size: 28px; color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 20px; }
+        /* 📱【新設】縦画面のときに横持ちを促すオーバーレイ画面 */
+        #orientation-blocker { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #0a0a1a; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: #fff; text-align: center; }
+        .rotate-icon { font-size: 50px; margin-bottom: 20px; animation: rotateAnim 2s infinite ease-in-out; }
+        @keyframes rotateAnim { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+
+        /* 縦画面（ポートレート）の時にブロック画面を表示 */
+        @media screen and (orientation: portrait) {
+            #orientation-blocker { display: flex; }
+        }
+
+        .menu-screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 26, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; }
+        .menu-title { font-size: 42px; font-weight: bold; color: #00ff88; text-shadow: 0 0 15px #00ff88; margin-bottom: 20px; letter-spacing: 2px; text-align: center;}
+        .menu-subtitle { font-size: 28px; color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 15px; }
         
-        .menu-btn { width: 200px; padding: 12px; margin: 10px; background: rgba(255,255,255,0.03); border: 2px solid #00ffaa; color: #00ffaa; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; text-align: center; box-shadow: 0 0 10px rgba(0,255,170,0.1); transition: all 0.2s; }
+        .menu-btn { width: 220px; padding: 10px; margin: 8px; background: rgba(255,255,255,0.03); border: 2px solid #00ffaa; color: #00ffaa; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; text-align: center; transition: all 0.2s; }
         .menu-btn:active { background: rgba(0,255,170,0.3); box-shadow: 0 0 15px #00ffaa; }
         .back-btn { border-color: #ff4444; color: #ff4444; }
         .back-btn:active { background: rgba(255,68,68,0.3); box-shadow: 0 0 15px #ff4444; }
 
-        /* ログイン画面用スタイル */
-        .login-input { width: 220px; padding: 12px 20px; background: rgba(255,255,255,0.05); border: 2px solid #00ffff; border-radius: 20px; color: #fff; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; box-shadow: 0 0 10px rgba(0,255,255,0.2); }
-        .user-tag { font-size: 14px; color: #00ff88; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 5px #00ff88; }
+        .login-input { width: 220px; padding: 10px 20px; background: rgba(255,255,255,0.05); border: 2px solid #00ffff; border-radius: 20px; color: #fff; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
+        .user-tag { font-size: 14px; color: #00ff88; font-weight: bold; margin-bottom: 10px; }
+        .coin-display { font-size: 18px; color: #ffd700; font-weight: bold; margin-bottom: 15px; }
 
-        .coin-display { font-size: 20px; color: #ffd700; font-weight: bold; text-shadow: 0 0 8px #ffd700; margin-bottom: 20px; }
-
-        .shop-container { display: flex; flex-direction: column; gap: 12px; width: 340px; margin-bottom: 20px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
-        .shop-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .shop-container { display: flex; flex-direction: column; gap: 10px; width: 400px; margin-bottom: 15px; max-height: 50vh; overflow-y: auto; padding-right: 5px; }
+        .shop-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
         .shop-info { text-align: left; }
         .shop-name { font-size: 13px; font-weight: bold; color: #00bfff; }
         .shop-lv { font-size: 11px; color: #8a8aaf; }
-        .shop-btn { background: #ffd700; color: #111; border: none; padding: 6px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px; width: 70px; text-align: center; }
-        .shop-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px; width: 70px; text-align: center; }
+        .shop-btn:disabled { background: #444; color: #888; }
 
-        .controls { position: absolute; bottom: 40px; left: 30px; width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        #joystick-handle { width: 50px; height: 50px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); transition: transform 0.05s ease; }
+        /* 🕹【左手側】移動ジョイスティック（横持ちに合わせ左下に固定） */
+        .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        #joystick-handle { width: 45px; height: 45px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
         
-        .action-zone { position: absolute; bottom: 30px; right: 25px; width: 160px; height: 160px; z-index: 10; }
+        /* 🕹【右手側】横画面用に最適化されたゲームパット風・逆三角形レイアウト */
+        .action-zone { position: absolute; bottom: 25px; right: 40px; width: 180px; height: 130px; z-index: 10; }
         .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; transition: background 0.1s; }
         
-        #btn-shock { width: 68px; height: 68px; top: 0; left: 46px; background: rgba(255, 215, 0, 0.15); border: 2px solid #ffd700; color: #ffd700; font-size: 26px; }
-        #btn-attack { width: 78px; height: 78px; bottom: 0; right: 0; background: rgba(0, 255, 255, 0.15); border: 2px solid rgba(0, 255, 255, 0.7); color: #00ffff; font-size: 28px; }
-        #btn-guard { width: 68px; height: 68px; bottom: 0; left: 0; background: rgba(30, 144, 255, 0.15); border: 2px solid #1e90ff; color: #1e90ff; font-size: 24px; }
+        /* 💥 メイン攻撃：一番押しやすい中央右寄りに大型配置 */
+        #btn-attack { width: 76px; height: 76px; bottom: 10px; right: 0; background: rgba(0, 255, 255, 0.15); border: 2px solid rgba(0, 255, 255, 0.7); color: #00ffff; font-size: 26px; }
         
-        .cooldown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: bold; opacity: 0; pointer-events: none; }
+        /* 🛡️ 防御：右下に引っ込めて親指スライドで届く位置に */
+        #btn-guard { width: 56px; height: 56px; bottom: 0; left: 20px; background: rgba(30, 144, 255, 0.15); border: 2px solid #1e90ff; color: #1e90ff; font-size: 20px; }
+        
+        /* ⚡️ 雷：右上に配置して誤爆防止 */
+        #btn-shock { width: 56px; height: 56px; top: 0; left: 40px; background: rgba(255, 215, 0, 0.15); border: 2px solid #ffd700; color: #ffd700; font-size: 22px; }
+        
+        .cooldown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; opacity: 0; pointer-events: none; }
 
-        .ui-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; width: 240px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
-        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); }
-        .hp-label { font-weight: bold; font-size: 10px; margin-bottom: 3px; text-align: left; }
+        /* 📊【上部インフォ】横画面に合わせて左右に広くセパレート */
+        .ui-container { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 85vw; display: flex; justify-content: space-between; gap: 40px; z-index: 10; pointer-events: none; }
+        .hp-group { background: rgba(10, 10, 30, 0.85); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.15); flex: 1; max-width: 300px; }
+        .hp-label { font-weight: bold; font-size: 11px; margin-bottom: 4px; text-align: left; }
         .player-label { color: #00ff88; }
         .enemy-label { color: #ff4444; }
-        .hp-bar-bg { width: 100%; height: 6px; background: #111122; border-radius: 3px; overflow: hidden; }
+        .hp-bar-bg { width: 100%; height: 8px; background: #111122; border-radius: 4px; overflow: hidden; }
         .hp-bar-fill { width: 100%; height: 100%; transition: width 0.2s ease; }
         #player-hp-fill { background: linear-gradient(90deg, #00ff88, #00bfff); }
         #enemy-hp-fill { background: linear-gradient(90deg, #ff4444, #ffaa00); }
-        .info-text { font-size: 10px; color: #8a8aaf; text-align: right; margin-top: 2px; font-weight: bold; }
+        .info-text { font-size: 10px; color: #8a8aaf; text-align: right; margin-top: 3px; font-weight: bold; }
 
-        #lock-ui { position: absolute; top: 160px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
+        #lock-ui { position: absolute; top: 85px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
+    <!-- 🔄 スマホ縦持ちの時の警告画面 -->
+    <div id="orientation-blocker">
+        <div class="rotate-icon">🔄</div>
+        <div style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">画面を横向きにしてください</div>
+        <div style="font-size: 12px; color: #8a8aaf; margin-top: 8px;">Please rotate your device to landscape</div>
+    </div>
+
     <canvas id="game-canvas"></canvas>
 
+    <!-- 🔑 ログイン画面 -->
     <div id="login-screen" class="menu-screen">
         <div class="menu-title">CYBER BATTLE</div>
-        <div style="font-size: 14px; color: #8a8aaf; margin-bottom: 20px;">ENTER YOUR PILOT NAME</div>
+        <div style="font-size: 13px; color: #8a8aaf; margin-bottom: 15px; letter-spacing: 1px;">ENTER YOUR PILOT NAME</div>
         <input type="text" id="username-input" class="login-input" placeholder="GUEST_PLAYER" maxlength="12" />
         <div class="menu-btn" onclick="loginAndStart()">LAUNCH GAME</div>
     </div>
 
+    <!-- メインメニュー -->
     <div id="main-menu" class="menu-screen" style="display:none;">
         <div class="menu-title">CYBER BATTLE</div>
         <div id="current-user-tag" class="user-tag">PILOT: ------</div>
         <div id="main-coin" class="coin-display">COIN: 0</div>
-        <div class="menu-btn" onclick="switchScreen('stage-select')">PLAY</div>
-        <div class="menu-btn" onclick="switchScreen('status-shop')">STATUS</div>
-        <div class="menu-btn" onclick="switchScreen('option-menu')">OPTION</div>
-        <div class="menu-btn back-btn" onclick="logout()" style="font-size:14px; width:150px; margin-top:20px;">LOGOUT</div>
+        <div style="display: flex; gap: 10px;">
+            <div class="menu-btn" style="width:140px;" onclick="switchScreen('stage-select')">PLAY</div>
+            <div class="menu-btn" style="width:140px;" onclick="switchScreen('status-shop')">STATUS</div>
+            <div class="menu-btn" style="width:140px;" onclick="switchScreen('option-menu')">OPTION</div>
+        </div>
+        <div class="menu-btn back-btn" onclick="logout()" style="font-size:12px; width:100px; margin-top:15px; padding: 6px;">LOGOUT</div>
     </div>
 
     <div id="stage-select" class="menu-screen" style="display:none;">
@@ -90,34 +117,13 @@
         <div class="menu-subtitle">UPGRADE STATUS</div>
         <div id="shop-coin" class="coin-display">COIN: 0</div>
         <div class="shop-container">
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">MAX HP</div><div id="lv-hp" class="shop-lv">LV.1 (5 HP)</div></div>
-                <button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">SHIELD CAPACITY</div><div id="lv-shield" class="shop-lv">LV.1 (3 GUARD)</div></div>
-                <button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">ATTACK POWER</div><div id="lv-atk" class="shop-lv">LV.1</div></div>
-                <button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">FIRE RATE</div><div id="lv-rate" class="shop-lv">LV.1</div></div>
-                <button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">100 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">MOVE SPEED</div><div id="lv-speed" class="shop-lv">LV.1</div></div>
-                <button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">MULTI SHOT</div><div id="lv-shot" class="shop-lv">1 BULLET</div></div>
-                <button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-info"><div class="shop-name">E-SHOCK POWER</div><div id="lv-shock" class="shop-lv">LV.1</div></div>
-                <button id="btn-buy-shock" class="shop-btn" onclick="buyUpgrade('shock')">150 C</button>
-            </div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">MAX HP</div><div id="lv-hp" class="shop-lv">LV.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">SHIELD CAPACITY</div><div id="lv-shield" class="shop-lv">LV.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">ATTACK POWER</div><div id="lv-atk" class="shop-lv">LV.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">FIRE RATE</div><div id="lv-rate" class="shop-lv">LV.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">100 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">MOVE SPEED</div><div id="lv-speed" class="shop-lv">LV.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">MULTI SHOT</div><div id="lv-shot" class="shop-lv">1 BULLET</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button></div>
+            <div class="shop-item"><div class="shop-info"><div class="shop-name">E-SHOCK POWER</div><div id="lv-shock" class="shop-lv">LV.1</div></div><button id="btn-buy-shock" class="shop-btn" onclick="buyUpgrade('shock')">150 C</button></div>
         </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">BACK</div>
     </div>
@@ -125,16 +131,17 @@
     <div id="option-menu" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">SYSTEM OPTIONS</div>
         <div id="btn-mute" class="menu-btn" onclick="toggleMute()">AUDIO: ON</div>
-        <div class="menu-btn back-btn" onclick="resetProgress()" style="margin-top:40px; font-size:14px; opacity:0.7;">RESET PROFILE DATA</div>
+        <div class="menu-btn back-btn" onclick="resetProgress()" style="margin-top:20px; font-size:13px; opacity:0.7;">RESET PROFILE DATA</div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">BACK</div>
     </div>
 
     <div id="result-screen" class="menu-screen" style="display:none;">
         <div id="result-title"></div>
-        <div id="result-coin-gain" style="color:#ffd700; font-weight:bold; margin-bottom:15px;">+0 COINS ACQUIRED</div>
+        <div id="result-coin-gain" style="color:#ffd700; font-weight:bold; margin-bottom:15px;">+0 COINS</div>
         <div class="menu-btn" onclick="backToMenu()">RETURN TO MENU</div>
     </div>
 
+    <!-- ゲーム内UIコンテナ -->
     <div id="ingame-ui" style="display:none;">
         <div class="ui-container">
             <div class="hp-group">
@@ -149,8 +156,10 @@
             </div>
         </div>
         <div id="lock-ui">LOCK ON ACTIVE</div>
+        
         <div id="joystick-container" class="controls"><div id="joystick-handle"></div></div>
         
+        <!-- 🎮 新・横画面レイアウト（逆三角形型） -->
         <div class="action-zone">
             <div id="btn-shock" class="btn-action">⚡️<div id="shock-cooldown-overlay" class="cooldown-overlay">0.0</div></div>
             <div id="btn-guard" class="btn-action">🛡️</div>
@@ -160,9 +169,7 @@
 
     <script>
     //<![CDATA[
-        // ==========================================
-        // 💾 複数アカウント・セーブシステム 改良版
-        // ==========================================
+        const SAVE_KEY = 'CyberBattleSaveData';
         let currentPilotName = "GUEST_PLAYER";
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
         
@@ -176,85 +183,45 @@
             shock: { lv: 1, max: 5,  basePrice: 150, scale: 1.6 }
         };
 
-        // ログイン処理
         function loginAndStart() {
             let inputName = document.getElementById('username-input').value.trim();
             if(!inputName) { inputName = "GUEST_PLAYER"; }
             currentPilotName = inputName;
-            
-            // 入力された名前のセーブデータをロード
             loadGame(currentPilotName);
-            
             document.getElementById('current-user-tag').textContent = "PILOT: " + currentPilotName;
             document.getElementById('login-screen').style.display = 'none';
             switchScreen('main-menu');
         }
-
-        function logout() {
-            document.getElementById('username-input').value = "";
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-        }
-
-        // 名前（キー）ごとに保存を分ける
+        function logout() { document.getElementById('username-input').value = ""; document.getElementById('main-menu').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; }
         function saveGame() {
             const saveKey = 'CyberBattle_' + currentPilotName;
             const data = { coins: globalCoins, lv_hp: upgrades.hp.lv, lv_shield: upgrades.shield.lv, lv_atk: upgrades.atk.lv, lv_rate: upgrades.rate.lv, lv_speed: upgrades.speed.lv, lv_shot: upgrades.shot.lv, lv_shock: upgrades.shock.lv };
             localStorage.setItem(saveKey, JSON.stringify(data));
         }
-
         function loadGame(pilotName) {
-            // いったん初期ステータスにリセット
-            Object.keys(upgrades).forEach(k => upgrades[k].lv = 1);
-            globalCoins = 0;
-
-            const saveKey = 'CyberBattle_' + pilotName;
-            const saved = localStorage.getItem(saveKey);
+            Object.keys(upgrades).forEach(k => upgrades[k].lv = 1); globalCoins = 0;
+            const saveKey = 'CyberBattle_' + pilotName; const saved = localStorage.getItem(saveKey);
             if (saved) {
                 const data = JSON.parse(saved); globalCoins = data.coins || 0;
                 if(data.lv_hp) upgrades.hp.lv = data.lv_hp; if(data.lv_shield) upgrades.shield.lv = data.lv_shield; if(data.lv_atk) upgrades.atk.lv = data.lv_atk; if(data.lv_rate) upgrades.rate.lv = data.lv_rate; if(data.lv_speed) upgrades.speed.lv = data.lv_speed; if(data.lv_shot) upgrades.shot.lv = data.lv_shot; if(data.lv_shock) upgrades.shock.lv = data.lv_shock;
             }
         }
+        function resetProgress() { if(confirm(`パイロット「${currentPilotName}」のデータを初期化します。よろしいですか？`)) { localStorage.removeItem('CyberBattle_' + currentPilotName); logout(); location.reload(); } }
 
-        function resetProgress() { 
-            if(confirm(`パイロット「${currentPilotName}」のセーブデータを削除します。よろしいですか？`)) { 
-                localStorage.removeItem('CyberBattle_' + currentPilotName); 
-                logout();
-                location.reload(); 
-            } 
-        }
-
-        // ==========================================
-        // サウンド合成
-        // ==========================================
         let audioCtx = null; let bgmNode = null;
         function initAudio() { if (audioCtx || isMuted) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); startBGM(); }
-        function toggleMute() {
-            isMuted = !isMuted; document.getElementById('btn-mute').textContent = isMuted ? "AUDIO: OFF" : "AUDIO: ON";
-            if (isMuted) { stopBGM(); audioCtx = null; } else { initAudio(); }
-        }
+        function toggleMute() { isMuted = !isMuted; document.getElementById('btn-mute').textContent = isMuted ? "AUDIO: OFF" : "AUDIO: ON"; if (isMuted) { stopBGM(); audioCtx = null; } else { initAudio(); } }
         function playSound(type) {
-            if (!audioCtx || isMuted) return;
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
-            if (type === 'shoot') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12);
-            } else if (type === 'shock') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(600, now + 0.3); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3);
-            } else if (type === 'hit') {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now); osc.frequency.linearRampToValueAtTime(40, now + 0.08); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08);
-            } else if (type === 'guard') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(400, now + 0.08); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08);
-            } else if (type === 'clear') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08); osc.frequency.setValueAtTime(784, now + 0.16); osc.frequency.setValueAtTime(1046, now + 0.24); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.5); osc.start(now); osc.stop(now + 0.5);
-            } else if (type === 'gameover') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(250, now); osc.frequency.linearRampToValueAtTime(50, now + 0.4); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4);
-            }
+            if (!audioCtx || isMuted) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
+            if (type === 'shoot') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12); } 
+            else if (type === 'shock') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(600, now + 0.3); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); } 
+            else if (type === 'hit') { osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now); osc.frequency.linearRampToValueAtTime(40, now + 0.08); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
+            else if (type === 'guard') { osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(400, now + 0.08); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
+            else if (type === 'clear') { osc.type = 'square'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08); osc.frequency.setValueAtTime(784, now + 0.16); osc.frequency.setValueAtTime(1046, now + 0.24); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.5); osc.start(now); osc.stop(now + 0.5); } 
+            else if (type === 'gameover') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(250, now); osc.frequency.linearRampToValueAtTime(50, now + 0.4); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); }
         }
         function startBGM() {
-            if (!audioCtx) return;
-            const bufferSize = audioCtx.sampleRate * 2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0);
-            const notes = [110, 110, 130, 110, 146, 110, 165, 130]; const stepLen = audioCtx.sampleRate * 0.25;
+            if (!audioCtx) return; const bufferSize = audioCtx.sampleRate * 2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); const notes = [110, 110, 130, 110, 146, 110, 165, 130]; const stepLen = audioCtx.sampleRate * 0.25;
             for (let i = 0; i < bufferSize; i++) { const step = Math.floor(i / stepLen) % notes.length; const freq = notes[step]; const t = i / audioCtx.sampleRate; data[i] = (Math.sin(2 * Math.PI * freq * t) + ((i % Math.floor(audioCtx.sampleRate / freq)) / (audioCtx.sampleRate / freq) - 0.5) * 0.2) * Math.max(0, 1 - ((i % stepLen) / stepLen) * 2.5) * 0.04; }
             bgmNode = audioCtx.createBufferSource(); bgmNode.buffer = buffer; bgmNode.loop = true; bgmNode.connect(audioCtx.destination); bgmNode.start();
         }
@@ -274,12 +241,10 @@
                 const btn = document.getElementById('btn-buy-' + type); if (up.lv >= up.max) { btn.textContent = "MAX"; btn.disabled = true; } else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
             });
         }
-        function buyUpgrade(type) {
-            const price = getPrice(type); if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); saveGame(); switchScreen('status-shop'); }
-        }
+        function buyUpgrade(type) { const price = getPrice(type); if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); saveGame(); switchScreen('status-shop'); } }
 
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0e0e1a);
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
         const canvas = document.getElementById('game-canvas');
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(1);
@@ -287,8 +252,7 @@
         const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2();
         scene.add(new THREE.AmbientLight(0xffffff, 0.7));
         const dirLight = new THREE.DirectionalLight(0xddffff, 0.8); dirLight.position.set(5, 12, 8); scene.add(dirLight);
-        const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 }));
-        floor.rotation.x = -Math.PI / 2; scene.add(floor);
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
         const gridHelper = new THREE.GridHelper(50, 50, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
 
         function createRobot(mainColor, eyeColor, isPlayerMech = false) {
@@ -319,10 +283,8 @@
         camera.position.set(0, 5, 7); camera.lookAt(player.position);
 
         const clock = new THREE.Clock(); const TIME_SCALE = 60;
-        let activeBattle = false; let playerHP = 5; let maxPlayerHP = 5;
-        let shieldHP = 3; let maxShieldHP = 3; let isShieldBroken = false; let isGuarding = false; let lockedEnemyIndex = -1;
-        const enemies = []; const bullets = []; let playerAttackCooldown = 0;
-        let playerShockCooldown = 0; const MAX_SHOCK_COOLDOWN = 90; let shockVisualTimer = 0;
+        let activeBattle = false; let playerHP = 5; let maxPlayerHP = 5; let shieldHP = 3; let maxShieldHP = 3; let isShieldBroken = false; let isGuarding = false; let lockedEnemyIndex = -1;
+        const enemies = []; const bullets = []; let playerAttackCooldown = 0; let playerShockCooldown = 0; const MAX_SHOCK_COOLDOWN = 90; let shockVisualTimer = 0;
 
         function getPlayerStat(type) {
             const up = upgrades[type]; if (type === 'hp') return 4 + up.lv; if (type === 'shield') return 2 + up.lv; if (type === 'atk') return up.lv; if (type === 'rate') return Math.max(8, 26 - up.lv * 4); if (type === 'speed') return 0.04 + up.lv * 0.01; if (type === 'shot') return up.lv; if (type === 'shock') return up.lv * 2; return 1;
@@ -368,7 +330,7 @@
         }
 
         function updateInGameUI() {
-            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%'; document.getElementById('shield-status').textContent = isShieldBroken ? "SHIELD CRASHED" : `SHIELD: ${shieldHP} / ${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
+            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%'; document.getElementById('shield-status').textContent = isShieldBroken ? "CRASHED" : `SHIELD: ${shieldHP}/${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
             const totalMax = enemies.length * 5; let currentTotal = 0; let aliveCount = 0; enemies.forEach(e => { if(e.hp > 0) { currentTotal += e.hp; aliveCount++; } });
             document.getElementById('enemy-hp-fill').style.width = totalMax > 0 ? (currentTotal / totalMax) * 100 + '%' : '0%'; document.getElementById('enemy-count-status').textContent = `ALIVE: ${aliveCount}`; document.getElementById('lock-ui').style.display = lockedEnemyIndex !== -1 ? 'block' : 'none';
         }
@@ -460,11 +422,9 @@
             renderer.render(scene, camera);
         }
 
-        // 初期画面はログイン画面にするためアニメーション開始のみ行う
         animate();
         window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     //]]>
     </script>
 </body>
 </html>
- 
