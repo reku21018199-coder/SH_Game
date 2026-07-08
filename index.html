@@ -104,6 +104,7 @@
     <canvas id="game-canvas"></canvas>
     <div id="damage-container" style="position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%;"></div>
 
+    <!-- 🔑 ログイン画面 -->
     <div id="login-screen" class="menu-screen">
         <div class="menu-title">CYBER BATTLE</div>
         <div style="font-size: 13px; color: #8a8aaf; margin-bottom: 15px;">パイロット名を入力してください</div>
@@ -111,6 +112,7 @@
         <div class="menu-btn" onclick="loginAndStart()">ゲーム開始</div>
     </div>
 
+    <!-- メインメニュー -->
     <div id="main-menu" class="menu-screen" style="display:none;">
         <div class="menu-title">CYBER BATTLE</div>
         <div id="current-user-tag" class="user-tag">パイロット: ------</div>
@@ -124,14 +126,21 @@
         <div class="menu-btn back-btn" onclick="logout()" style="font-size:11px; width:90px; margin-top:15px; padding: 5px;">ログアウト</div>
     </div>
 
+    <!-- ミッション選択 (ステージ5まで拡張) -->
     <div id="stage-select" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">ミッション選択</div>
-        <div class="menu-btn" style="border-color: #00ffff; color: #00ffff;" onclick="startBattle(0)">チュートリアル</div>
-        <div class="menu-btn" onclick="startBattle(1)">ステージ 1 </div>
-        <div class="menu-btn" onclick="startBattle(2)">ステージ 2 </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 340px; margin-bottom: 10px;">
+            <div class="menu-btn" style="width: auto; border-color: #00ffff; color: #00ffff; margin: 2px;" onclick="startBattle(0)">チュートリアル</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(1)">ステージ 1</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(2)">ステージ 2</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(3)">ステージ 3</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(4)">ステージ 4</div>
+            <div class="menu-btn" style="width: auto; border-color: #ff3366; color: #ff3366; margin: 2px; grid-column: span 2;" onclick="startBattle(5)">ステージ 5 [BOSS]</div>
+        </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
+    <!-- 🛡️ 装備設定画面 -->
     <div id="equipment-screen" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">装備編成</div>
         <div id="equip-coin" class="coin-display">コイン: 0</div>
@@ -173,10 +182,10 @@
                 </div>
             </div>
         </div>
-        
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')" style="margin-top:10px;">戻る</div>
     </div>
 
+    <!-- 🛒 SHOP -->
     <div id="status-shop" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">サイバーショップ</div>
         <div id="shop-coin" class="coin-display">コイン: 0</div>
@@ -202,6 +211,7 @@
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
+    <!-- 装備付け替えポップアップ -->
     <div id="selector-popup">
         <div class="selector-window">
             <div id="selector-title" style="font-size:15px; font-weight:bold; color:#00ffff; margin-bottom:12px;">ギア選択</div>
@@ -223,6 +233,7 @@
         <div class="menu-btn" onclick="backToMenu()">メニューへ戻る</div>
     </div>
 
+    <!-- ⚡️ 戦闘中コマンドメニュー -->
     <div id="command-menu">
         <div class="command-window">
             <div style="font-size:18px; font-weight:bold; color:#ffd700; margin-bottom:4px;">コマンド選択</div>
@@ -232,6 +243,7 @@
         </div>
     </div>
 
+    <!-- ゲーム内UIコンテナ -->
     <div id="ingame-ui" style="display:none;">
         <div id="tutorial-nav" style="position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(10,10,30,0.85); padding: 8px 20px; border-radius: 8px; border: 1px solid #00ffff; text-align: center; display: none; z-index: 10; pointer-events: none; white-space: nowrap; box-shadow: 0 0 10px rgba(0,255,255,0.3);">
             指示が表示されます
@@ -263,7 +275,6 @@
         let currentPilotName = "GUEST_PLAYER";
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
         
-        // ⚡️ チュートリアル管理変数
         let tutorialStep = 0;
         let tutorialTimer = 0;
 
@@ -501,7 +512,7 @@
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
         const gridHelper = new THREE.GridHelper(50, 50, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
 
-        function createRobot(mainColor, eyeColor, isPlayerMech = false) {
+        function createRobot(mainColor, eyeColor, isPlayerMech = false, sizeScale = 1) {
             const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.15, metalness: 0.5 }); const em = new THREE.MeshStandardMaterial({ color: eyeColor, roughness: 0.1 }); const jm = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6 });
             const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.7, 0.6), m); body.position.y = 0.65; g.add(body);
             const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.4), m); head.position.y = 1.1; g.add(head);
@@ -513,6 +524,8 @@
                 const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.05, 16), new THREE.MeshBasicMaterial({ color: 0x00ffff })); muzzle.rotation.x = Math.PI / 2; muzzle.position.set(0, 0, -0.62); rightArmGroup.add(muzzle); g.add(rightArmGroup);
             } else { const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), m); rightArm.position.set(-0.55, 0.65, 0); g.add(rightArm); }
             const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.3, 16), jm); leg.rotation.z = Math.PI / 2; leg.position.y = 0.15; g.add(leg);
+            
+            if (sizeScale !== 1) { g.scale.set(sizeScale, sizeScale, sizeScale); }
             return g;
         }
 
@@ -560,12 +573,13 @@
             damageTexts.push({ element: el, pos3D: position.clone().add(new THREE.Vector3((Math.random()-0.5)*0.3, 1.3, (Math.random()-0.5)*0.3)), age: 0 });
         }
 
-        function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null, size = 0.15, damageOverride = null) {
-            let bColor = 0x00ffff;
+        function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null, size = 0.15, damageOverride = null, colorOverride = null) {
+            let bColor = isPlayer ? 0x00ffff : 0xff3333;
             if (isPlayer) {
                 if (equippedGears.weapon.includes('plasma')) { bColor = 0xff00ff; size = 0.12; } 
                 else if (equippedGears.weapon.includes('vortex')) { bColor = 0x00ffaa; size = 0.3; }
-            } else { bColor = 0xff3333; }
+            }
+            if (colorOverride !== null) bColor = colorOverride;
 
             const bMesh = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshBasicMaterial({ color: bColor }));
             if (isPlayer) {
@@ -636,6 +650,7 @@
             }
         }
 
+        // ⚡️ ステージ5までの敵データを高度に生成
         function startBattle(stageNum) {
             currentStage = stageNum; activeBattle = true; isCommandPaused = false;
             maxPlayerHP = getPlayerStat('hp'); playerHP = maxPlayerHP; playerCP = 0;
@@ -643,25 +658,48 @@
             player.position.set(0, 0, 0); player.rotation.y = 0; playerRotation = 0; scene.add(player); inputX = 0; inputZ = 0; enemies.forEach(e => scene.remove(e.mesh)); enemies.length = 0; bullets.forEach(b => scene.remove(b.mesh)); bullets.length = 0;
             document.getElementById('damage-container').innerHTML = ""; damageTexts.length = 0;
             
-            // ⚡️ チュートリアル初期化ロジック
             const navEl = document.getElementById('tutorial-nav');
+            
             if (stageNum === 0) {
-                tutorialStep = 1;
-                tutorialTimer = 0;
-                navEl.style.display = 'block';
-                navEl.textContent = "ジョイスティックを動かして【移動】してみよう";
-                
-                // 動かない安全な標的を1体配置
-                const enemyMesh = createRobot(0xff4444, 0xffaa00, false);
-                enemyMesh.position.set(0, 0, -5);
-                scene.add(enemyMesh);
-                enemies.push({ mesh: enemyMesh, hp: 5, shootTimer: Infinity }); // 攻撃してこないようにInfinity
+                tutorialStep = 1; tutorialTimer = 0; navEl.style.display = 'block'; navEl.textContent = "ジョイスティックを動かして【移動】してみよう";
+                const enemyMesh = createRobot(0xff4444, 0xffaa00, false); enemyMesh.position.set(0, 0, -5); scene.add(enemyMesh);
+                enemies.push({ mesh: enemyMesh, hp: 5, shootTimer: Infinity, type: 'dummy' });
             } else {
-                tutorialStep = 0;
-                navEl.style.display = 'none';
+                tutorialStep = 0; navEl.style.display = 'none';
                 
-                const count = stageNum === 1 ? 1 : 3;
-                for(let i=0; i<count; i++) { const enemyMesh = createRobot(0xff4444, 0xffaa00, false); const ez = -8 - (i * 2); const ex = (i - (count-1)/2) * 4; enemyMesh.position.set(ex, 0, ez); scene.add(enemyMesh); enemies.push({ mesh: enemyMesh, hp: stageNum === 1 ? 6 : 9, shootTimer: 40 + Math.random() * 40 }); }
+                if (stageNum === 1) {
+                    const enemyMesh = createRobot(0xff4444, 0xffaa00, false); enemyMesh.position.set(0, 0, -8); scene.add(enemyMesh);
+                    enemies.push({ mesh: enemyMesh, hp: 6, shootTimer: 50, type: 'std', speed: 0.015 });
+                } 
+                else if (stageNum === 2) {
+                    for(let i=0; i<3; i++) {
+                        const enemyMesh = createRobot(0xff4444, 0xffaa00, false); const ex = (i - 1) * 4; enemyMesh.position.set(ex, 0, -9); scene.add(enemyMesh);
+                        enemies.push({ mesh: enemyMesh, hp: 8, shootTimer: 40 + Math.random() * 40, type: 'std', speed: 0.015 });
+                    }
+                } 
+                else if (stageNum === 3) {
+                    // クラスター・センチネル (中ボス、少し巨大、耐久型)
+                    const bossMesh = createRobot(0x8b008b, 0x00ffff, false, 1.4); bossMesh.position.set(0, 0, -10); scene.add(bossMesh);
+                    enemies.push({ mesh: bossMesh, hp: 20, shootTimer: 60, type: 'cluster', speed: 0.008 });
+                    
+                    // 護衛機
+                    for(let i=0; i<2; i++) {
+                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set(i===0?-4:4, 0, -8); scene.add(m);
+                        enemies.push({ mesh: m, hp: 6, shootTimer: 30, type: 'std', speed: 0.018 });
+                    }
+                } 
+                else if (stageNum === 4) {
+                    // ストライク・ヴァルキリー (高速強襲型 2体)
+                    for(let i=0; i<2; i++) {
+                        const m = createRobot(0xffaa00, 0xff0055, false, 1.1); m.position.set(i===0?-3:3, 0, -10); scene.add(m);
+                        enemies.push({ mesh: m, hp: 14, shootTimer: 40, type: 'valkyrie', speed: 0.035 });
+                    }
+                } 
+                else if (stageNum === 5) {
+                    // 最終ボス：オメガ・デストロイヤー (巨大要塞ボス)
+                    const bossMesh = createRobot(0x222222, 0xff0000, false, 2.2); bossMesh.position.set(0, 0, -13); scene.add(bossMesh);
+                    enemies.push({ mesh: bossMesh, hp: 40, shootTimer: 40, type: 'omega', speed: 0.01 });
+                }
             }
             
             document.getElementById('stage-select').style.display = 'none'; document.getElementById('ingame-ui').style.display = 'block'; updateInGameUI(); initAudio(); clock.getDelta();
@@ -677,22 +715,21 @@
         function endBattle(isWin) {
             activeBattle = false; stopBGM(); let coinGain = 0;
             if (isWin) { 
-                // チュートリアルは50コイン、他は既存通り
-                coinGain = currentStage === 0 ? 50 : (currentStage === 1 ? 120 : 350); 
-                globalCoins += coinGain; playSound('clear'); document.getElementById('result-title').textContent = currentStage === 0 ? "チュートリアル完了" : "ミッションクリア"; document.getElementById('result-title').style.color = "#00ff88"; 
+                const Payouts = [50, 120, 200, 320, 450, 999];
+                coinGain = Payouts[currentStage] || 100;
+                globalCoins += coinGain; playSound('clear'); document.getElementById('result-title').textContent = currentStage === 5 ? "すべての脅威を駆逐しました" : (currentStage === 0 ? "チュートリアル完了" : "ミッションクリア"); document.getElementById('result-title').style.color = "#00ff88"; 
             } 
             else { playSound('gameover'); document.getElementById('result-title').textContent = "システムダウン"; document.getElementById('result-title').style.color = "#ff4444"; }
             saveGame(); document.getElementById('result-coin-gain').textContent = `+${coinGain} コイン獲得`; document.getElementById('ingame-ui').style.display = 'none'; document.getElementById('tutorial-nav').style.display = 'none'; switchScreen('result-screen');
         }
         function backToMenu() { switchScreen('main-menu'); }
 
-        // --- モバイル用コントロールイベント ---
+        // --- コントロールイベント ---
         let inputX = 0; let inputZ = 0;
         const joystick = document.getElementById('joystick-container'); const handle = document.getElementById('joystick-handle');
         let joystickActive = false; let joystickTouchId = null; let joystickCenterX = 0; let joystickCenterY = 0;
         
         function calcJoystickCenter() { const r = joystick.getBoundingClientRect(); joystickCenterX = r.left + r.width/2; joystickCenterY = r.top + r.height/2; }
-        
         joystick.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!activeBattle || isCommandPaused) return; calcJoystickCenter(); joystickActive = true; joystickTouchId = e.changedTouches[0].identifier; }, { passive: false });
         
         window.addEventListener('touchmove', (e) => {
@@ -714,7 +751,7 @@
         gBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
         gBtn.addEventListener('touchend', () => isGuarding = false);
 
-        const enemyBulletSpeed = 0.07; const enemyMoveSpeed = 0.015; let hoverTime = 0;
+        const enemyBulletSpeed = 0.07; let hoverTime = 0;
         
         // --- メインループ ---
         function animate() {
@@ -724,10 +761,8 @@
 
             for (let i = damageTexts.length - 1; i >= 0; i--) {
                 const d = damageTexts[i]; d.age += dt;
-                d.pos3D.y += dt * 0.9;
-                d.pos3D.project(camera);
-                const x = (d.pos3D.x * .5 + .5) * window.innerWidth;
-                const y = (d.pos3D.y * -.5 + .5) * window.innerHeight;
+                d.pos3D.y += dt * 0.9; d.pos3D.project(camera);
+                const x = (d.pos3D.x * .5 + .5) * window.innerWidth; const y = (d.pos3D.y * -.5 + .5) * window.innerHeight;
                 d.element.style.left = x + 'px'; d.element.style.top = y + 'px';
                 if (d.age >= 0.5) { d.element.remove(); damageTexts.splice(i, 1); }
             }
@@ -738,38 +773,17 @@
             hoverEffects.forEach(eff => { eff.scale += 0.02 * deltaScale; eff.opacity -= 0.01 * deltaScale; if (eff.opacity <= 0) { eff.scale = 0.5; eff.opacity = 0.6; } eff.mesh.scale.set(eff.scale, eff.scale, 1); eff.mesh.material.opacity = playerHP > 0 ? eff.opacity : 0; eff.mesh.position.set(player.position.x, 0.02, player.position.z); });
             
             if (activeBattle) {
-                // ⚡️ チュートリアル進行判定
+                // チュートリアル判定
                 if (currentStage === 0 && tutorialStep > 0) {
                     const navEl = document.getElementById('tutorial-nav');
                     if (tutorialStep === 1) {
-                        if (inputX !== 0 || inputZ !== 0) {
-                            tutorialTimer += dt;
-                            if (tutorialTimer > 1.2) { // 1.2秒移動したら次のステップへ
-                                tutorialStep = 2;
-                                tutorialTimer = 0;
-                                navEl.textContent = "🎯ボタンを押して敵を【ロックオン】しよう";
-                            }
-                        }
+                        if (inputX !== 0 || inputZ !== 0) { tutorialTimer += dt; if (tutorialTimer > 1.2) { tutorialStep = 2; tutorialTimer = 0; navEl.textContent = "🎯ボタンを押して敵を【ロックオン】しよう"; } }
                     } else if (tutorialStep === 2) {
-                        if (lockedEnemyIndex !== -1) {
-                            tutorialStep = 3;
-                            navEl.textContent = "🛡️ボタンを長押しして【ガード】を展開しよう";
-                        }
+                        if (lockedEnemyIndex !== -1) { tutorialStep = 3; navEl.textContent = "🛡️ボタンを長押しして【ガード】を展開しよう"; }
                     } else if (tutorialStep === 3) {
-                        if (isGuarding) {
-                            tutorialTimer += dt;
-                            if (tutorialTimer > 1.0) { // 1秒展開で次へ
-                                tutorialStep = 4;
-                                playerCP = 50; // 特別にCPをチャージしてあげる
-                                updateInGameUI();
-                                navEl.textContent = "⚡️ボタンから【コマンド：E-ショック】を発動しよう";
-                            }
-                        }
+                        if (isGuarding) { tutorialTimer += dt; if (tutorialTimer > 1.0) { tutorialStep = 4; playerCP = 50; updateInGameUI(); navEl.textContent = "⚡️ボタンから【コマンド：E-ショック】を発動しよう"; } }
                     } else if (tutorialStep === 4) {
-                        if (playerCP < 50) { // コマンドを使ってCPが減ったら次へ
-                            tutorialStep = 5;
-                            navEl.textContent = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！";
-                        }
+                        if (playerCP < 50) { tutorialStep = 5; navEl.textContent = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！"; }
                     }
                 }
 
@@ -784,8 +798,59 @@
                 enemies.forEach((e) => {
                     if (e.hp <= 0) return; totalEnemyHP += e.hp;
                     const dist = e.mesh.position.distanceTo(player.position); const dx = player.position.x - e.mesh.position.x; const dz = player.position.z - e.mesh.position.z; const angle = Math.atan2(dz, dx); e.mesh.rotation.y = -angle + Math.PI/2;
-                    if (dist > 4.5) { e.mesh.position.x += Math.cos(angle) * enemyMoveSpeed * deltaScale; e.mesh.position.z += Math.sin(angle) * enemyMoveSpeed * deltaScale; }
-                    e.shootTimer -= deltaScale; if (e.shootTimer <= 0) { e.shootTimer = 70 + Math.random() * 40; const erraticAngle = angle + (Math.random() - 0.5) * 0.4; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false); }
+                    
+                    const eSpd = (e.speed || 0.015) * deltaScale;
+                    
+                    // ⚡️ 敵の種類による独自の移動AIロジック
+                    if (e.type === 'valkyrie') {
+                        // 高速でプレイヤーの周囲を回り込むように動く
+                        if (dist > 3.5) {
+                            e.mesh.position.x += Math.cos(angle + 0.3) * eSpd; e.mesh.position.z += Math.sin(angle + 0.3) * eSpd;
+                        } else {
+                            e.mesh.position.x -= Math.cos(angle) * eSpd; e.mesh.position.z -= Math.sin(angle) * eSpd;
+                        }
+                    } else if (e.type === 'omega') {
+                        // ボスは一定距離を保ち左右に少し揺さぶりをかける
+                        const driftX = Math.sin(hoverTime * 0.3) * 0.02 * deltaScale;
+                        e.mesh.position.x += driftX;
+                        if (dist > 6.0) { e.mesh.position.x += Math.cos(angle) * eSpd; e.mesh.position.z += Math.sin(angle) * eSpd; }
+                    } else {
+                        // 標準型
+                        if (dist > 4.5) { e.mesh.position.x += Math.cos(angle) * eSpd; e.mesh.position.z += Math.sin(angle) * eSpd; }
+                    }
+                    
+                    // ⚡️ 敵の種類別攻撃アルゴリズム
+                    e.shootTimer -= deltaScale;
+                    if (e.shootTimer <= 0) {
+                        if (e.type === 'cluster') {
+                            e.shootTimer = 80 + Math.random() * 40;
+                            // 3方向マルチ弾幕
+                            for(let k = -1; k <= 1; k++) {
+                                spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.25), Math.sin(angle + k * 0.25), false, null, 0.18);
+                            }
+                        } else if (e.type === 'valkyrie') {
+                            e.shootTimer = 35 + Math.random() * 25;
+                            // 高速エネルギー弾
+                            spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, null, 0.14);
+                        } else if (e.type === 'omega') {
+                            e.shootTimer = 45;
+                            const randAttack = Math.random();
+                            if (randAttack < 0.5) {
+                                // 5方向オメガバースト弾幕
+                                for(let k = -2; k <= 2; k++) {
+                                    spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.2), Math.sin(angle + k * 0.2), false, null, 0.25, null, 0xffaa00);
+                                }
+                            } else {
+                                // プレイヤー狙いの高速ピンポイントレーザー
+                                spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, player, 0.15, null, 0xff00ff);
+                            }
+                        } else if (e.type !== 'dummy') {
+                            // 通常攻撃
+                            e.shootTimer = 70 + Math.random() * 40;
+                            const erraticAngle = angle + (Math.random() - 0.5) * 0.3;
+                            spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
+                        }
+                    }
                 });
                 if (totalEnemyHP <= 0 && enemies.length > 0) { endBattle(true); return; }
                 
@@ -796,25 +861,33 @@
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const b = bullets[i];
                     if (b.isPlayer && b.target && b.target.parent) { const tx = b.target.position.x - b.mesh.position.x; const tz = b.target.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz); if (d > 0.1) { b.dirX = b.dirX * 0.94 + (tx / d) * 0.06; b.dirZ = b.dirZ * 0.94 + (tz / d) * 0.06; const bl = Math.sqrt(b.dirX*b.dirX + b.dirZ*b.dirZ); b.dirX /= bl; b.dirZ /= bl; } }
+                    // 敵の追尾レーザー弾の弾道計算
+                    if (!b.isPlayer && b.target) {
+                        const tx = player.position.x - b.mesh.position.x; const tz = player.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz);
+                        if (d > 0.1) { b.dirX = b.dirX * 0.96 + (tx / d) * 0.04; b.dirZ = b.dirZ * 0.96 + (tz / d) * 0.04; }
+                    }
+                    
                     const bSpd = (b.isPlayer ? pBulletSpeed : enemyBulletSpeed) * deltaScale; b.mesh.position.x += b.dirX * bSpd; b.mesh.position.z += b.dirZ * bSpd; b.life -= deltaScale; let removed = false;
                     
                     if (b.isPlayer) {
                         for (let j = 0; j < enemies.length; j++) {
                             const e = enemies[j]; if (e.hp <= 0) continue;
-                            if (b.mesh.position.distanceTo(e.mesh.position) < 0.8) {
+                            const hitDist = (e.type === 'omega') ? 1.5 : 0.8; // オメガは巨体なので当たり判定を広く
+                            if (b.mesh.position.distanceTo(e.mesh.position) < hitDist) {
                                 let isCrit = Math.random() * 100 < getPlayerStat('critRate');
                                 let baseDmg = b.damage !== null ? b.damage : getPlayerStat('atk');
                                 let finalDmg = isCrit ? Math.floor(baseDmg * getPlayerStat('critDmg') / 100) : baseDmg;
                                 
                                 e.hp -= finalDmg;
-                                
                                 let cpGain = equippedGears.item.includes('cp') ? 8 : 5;
                                 playerCP = Math.min(maxPlayerCP, playerCP + cpGain);
                                 
                                 createDamageText(e.mesh.position, finalDmg, isCrit);
                                 playSound(isCrit ? 'crit' : 'hit');
                                 
-                                e.mesh.position.x += b.dirX * (isCrit ? 0.6 : 0.3) * deltaScale; e.mesh.position.z += b.dirZ * (isCrit ? 0.6 : 0.3) * deltaScale;
+                                if (e.type !== 'omega') { // ボスはノックバックしない
+                                    e.mesh.position.x += b.dirX * (isCrit ? 0.6 : 0.3) * deltaScale; e.mesh.position.z += b.dirZ * (isCrit ? 0.6 : 0.3) * deltaScale;
+                                }
                                 if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === j) lockedEnemyIndex = -1; }
                                 scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); break;
                             }
