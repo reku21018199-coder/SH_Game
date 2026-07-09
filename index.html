@@ -28,14 +28,22 @@
         .user-tag { font-size: 14px; color: #00ff88; font-weight: bold; margin-bottom: 8px; }
         .coin-display { font-size: 18px; color: #ffd700; font-weight: bold; margin-bottom: 12px; }
 
-        /* 🛒 ショップ コンテナ */
-        .shop-container { display: flex; flex-direction: column; gap: 6px; width: 460px; margin-bottom: 8px; max-height: 52vh; overflow-y: auto; padding-right: 5px; }
-        .shop-section-title { font-size: 13px; color: #00ffff; font-weight: bold; text-align: left; margin-top: 6px; border-left: 3px solid #00ffff; padding-left: 6px; }
-        .shop-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 5px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .shop-info { text-align: left; }
-        .shop-name { font-size: 12px; font-weight: bold; color: #00bfff; }
-        .shop-lv { font-size: 11px; color: #8a8aaf; }
-        .shop-btn { background: #ffd700; color: #111; border: none; padding: 4px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 85px; text-align: center; }
+        /* 🛒 2列ショップレイアウト */
+        .shop-grid { display: flex; gap: 20px; width: 780px; height: 55vh; margin-bottom: 10px; }
+        .shop-column { flex: 1; display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); overflow-y: auto; }
+        .shop-section-title { font-size: 14px; color: #00ffff; font-weight: bold; text-align: left; margin-bottom: 4px; border-left: 4px solid #00ffff; padding-left: 6px; }
+        .shop-item { background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
+        
+        /* カラー枠の指定 */
+        .border-item { border-color: #00ff88 !important; background: rgba(0,255,136,0.03); }      /* アイテム：緑 */
+        .border-command { border-color: #ffd700 !important; background: rgba(255,215,0,0.03); }   /* コマンド：黄 */
+        .border-gear { border-color: #ff3366 !important; background: rgba(255,51,102,0.03); }     /* ギア：赤 */
+
+        .shop-info { text-align: left; max-width: 240px; }
+        .shop-name { font-size: 12px; font-weight: bold; color: #fff; }
+        .shop-desc { font-size: 10px; color: #aaaaaa; margin-top: 2px; line-height: 1.2; }
+        .shop-lv { font-size: 11px; color: #00ffaa; font-weight: bold; }
+        .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 85px; text-align: center; }
         .shop-btn:disabled { background: #444; color: #888; }
 
         /* 🛡️ 装備画面レイアウト */
@@ -49,12 +57,6 @@
         .equip-slot { width: 55px; height: 55px; background: rgba(255,255,255,0.05); border: 1px dashed #666; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #888; cursor: pointer; position: relative; }
         .equip-slot.active { border: 1px solid #00ffaa; background: rgba(0,255,170,0.1); color: #fff; font-weight: bold; }
         .equip-slot.locked { border-color: #ff4444; background: rgba(255,68,68,0.05); color: #ff4444; cursor: default; }
-
-        /* 選択ポップアップ */
-        #selector-popup { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5,5,15,0.9); z-index: 300; flex-direction: column; align-items: center; justify-content: center; }
-        .selector-window { background: #0c0c24; border: 2px solid #00ffff; width: 340px; padding: 15px; border-radius: 10px; text-align: center; }
-        .selector-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; }
-        .selector-item:active { background: rgba(0,255,255,0.15); }
 
         /* 移動ジョイスティック */
         .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
@@ -81,14 +83,6 @@
         .info-text { font-size: 9px; color: #1e90ff; text-align: right; margin-top: 1px; font-weight: bold; }
 
         #lock-ui { position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #00ffaa; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 10px; border: 1px solid #00ffaa; display: none; z-index: 10; }
-
-        /* ⚡️ 戦闘中コマンドセレクト */
-        #command-menu { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 15, 0.85); z-index: 200; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .command-window { background: #0c0c24; border: 2px solid #ffd700; width: 320px; padding: 20px; border-radius: 12px; text-align: center; }
-        .command-item-btn { width: 100%; padding: 12px; margin: 6px 0; background: rgba(255,215,0,0.05); border: 1px solid #ffd700; color: #ffd700; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; font-size: 13px; }
-        .command-item-btn:disabled { border-color: #444; color: #666; background: none; cursor: not-allowed; }
-
-        /* ⚡️ 修正：ダメージテキスト用コンテナを整理し、一箇所のみの制御に限定 */
         .damage-indicator { position: absolute; font-family: 'Impact', Arial Black, sans-serif; font-weight: bold; pointer-events: none; z-index: 50; text-shadow: 0 0 5px #000; transform: translate(-50%, -50%); transition: opacity 0.2s ease; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -101,7 +95,6 @@
     </div>
 
     <canvas id="game-canvas"></canvas>
-    <!-- ⚡️ ダメージテキストを描画する唯一のコンテナ -->
     <div id="damage-container" style="position:absolute; top:0; left:0; pointer-events:none; width:100vw; height:100vh; overflow:hidden;"></div>
 
     <!-- 🔑 ログイン画面 -->
@@ -126,16 +119,20 @@
         <div class="menu-btn back-btn" onclick="logout()" style="font-size:11px; width:90px; margin-top:15px; padding: 5px;">ログアウト</div>
     </div>
 
-    <!-- ミッション選択 -->
+    <!-- ミッション選択（ステージ9まで拡張） -->
     <div id="stage-select" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">ミッション選択</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 340px; margin-bottom: 10px;">
-            <div class="menu-btn" style="width: auto; border-color: #00ffff; color: #00ffff; margin: 2px;" onclick="startBattle(0)">チュートリアル</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; width: 480px; margin-bottom: 10px;">
+            <div class="menu-btn" style="width: auto; border-color: #00ffff; color: #00ffff; margin: 2px; grid-column: span 3;" onclick="startBattle(0)">チュートリアル</div>
             <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(1)">ステージ 1</div>
             <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(2)">ステージ 2</div>
             <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(3)">ステージ 3</div>
             <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(4)">ステージ 4</div>
-            <div class="menu-btn" style="width: auto; border-color: #ff3366; color: #ff3366; margin: 2px; grid-column: span 2;" onclick="startBattle(5)">ステージ 5 [BOSS]</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(5)">ステージ 5</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(6)">ステージ 6</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(7)">ステージ 7</div>
+            <div class="menu-btn" style="width: auto; margin: 2px;" onclick="startBattle(8)">ステージ 8</div>
+            <div class="menu-btn" style="width: auto; border-color: #ff3366; color: #ff3366; margin: 2px; grid-column: span 3;" onclick="startBattle(9)">ステージ 9 [FINAL BOSS]</div>
         </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
@@ -144,7 +141,6 @@
     <div id="equipment-screen" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">装備編成</div>
         <div id="equip-coin" class="coin-display">コイン: 0</div>
-        
         <div class="equip-wrapper">
             <div class="equip-status-panel">
                 <div style="font-weight:bold; color:#00ffff; margin-bottom:8px; border-bottom:1px solid #00ffff;">現在のステータス</div>
@@ -156,28 +152,19 @@
                 <div class="status-row"><span>ファイアレート:</span><span id="stat-val-rate">0</span></div>
                 <div class="status-row"><span>移動スピード:</span><span id="stat-val-speed">0</span></div>
                 <div class="status-row"><span>マルチショット:</span><span id="stat-val-shot">0</span></div>
+                <div class="status-row"><span>ロックオン距離:</span><span id="stat-val-lockDist">0</span></div>
             </div>
-            
             <div class="equip-main-panel">
                 <div class="equip-row">
-                    <div class="equip-row-header">
-                        <span>アイテムスロット</span>
-                        <button id="btn-expand-item" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('item')">拡張 (+1)</button>
-                    </div>
+                    <div class="equip-row-header"><span>アイテムスロット</span><button id="btn-expand-item" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('item')">拡張 (+1)</button></div>
                     <div class="slot-container" id="container-item-slots"></div>
                 </div>
                 <div class="equip-row">
-                    <div class="equip-row-header">
-                        <span>コマンドスロット</span>
-                        <button id="btn-expand-command" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('command')">拡張 (+1)</button>
-                    </div>
+                    <div class="equip-row-header"><span>コマンドスロット</span><button id="btn-expand-command" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('command')">拡張 (+1)</button></div>
                     <div class="slot-container" id="container-command-slots"></div>
                 </div>
                 <div class="equip-row">
-                    <div class="equip-row-header">
-                        <span>ウェポンスロット</span>
-                        <button id="btn-expand-weapon" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('weapon')">拡張 (+1)</button>
-                    </div>
+                    <div class="equip-row-header"><span>ウェポンスロット</span><button id="btn-expand-weapon" class="shop-btn" style="width:100px; height:18px; font-size:9px;" onclick="expandSlots('weapon')">拡張 (+1)</button></div>
                     <div class="slot-container" id="container-weapon-slots"></div>
                 </div>
             </div>
@@ -185,70 +172,50 @@
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')" style="margin-top:10px;">戻る</div>
     </div>
 
-    <!-- 🛒 SHOP -->
+    <!-- 🛒 SHOP（2列・カラー枠レイアウト・Lv30対応） -->
     <div id="status-shop" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">サイバーショップ</div>
         <div id="shop-coin" class="coin-display">コイン: 0</div>
-        <div class="shop-container">
-            <div class="shop-section-title">ステータスアップグレード</div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">最大HP</div><div id="lv-hp" class="shop-lv">レベル.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">40 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">シールド耐久値</div><div id="lv-shield" class="shop-lv">レベル.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">60 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">基礎攻撃力</div><div id="lv-atk" class="shop-lv">レベル.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">50 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカル率(%)</div><div id="lv-critRate" class="shop-lv">レベル.1</div></div><button id="btn-buy-critRate" class="shop-btn" onclick="buyUpgrade('critRate')">60 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカルダメージ (%)</div><div id="lv-critDmg" class="shop-lv">レベル.1</div></div><button id="btn-buy-critDmg" class="shop-btn" onclick="buyUpgrade('critDmg')">70 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">ファイアレート</div><div id="lv-rate" class="shop-lv">レベル.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">100 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">移動スピード</div><div id="lv-speed" class="shop-lv">レベル.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">75 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">マルチショット</div><div id="lv-shot" class="shop-lv">1 バレット</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">300 C</button></div>
+        
+        <div class="shop-grid">
+            <!-- 左列：ステータス強化 (上限レベル30) -->
+            <div class="shop-column">
+                <div class="shop-section-title">ステータスアップグレード (最大Lv.30)</div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">最大HP</div><div id="lv-hp" class="shop-desc">レベル.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">20 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">シールド耐久値</div><div id="lv-shield" class="shop-desc">レベル.1</div></div><button id="btn-buy-shield" class="shop-btn" onclick="buyUpgrade('shield')">25 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">基礎攻撃力</div><div id="lv-atk" class="shop-desc">レベル.1</div></div><button id="btn-buy-atk" class="shop-btn" onclick="buyUpgrade('atk')">20 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカル率</div><div id="lv-critRate" class="shop-desc">レベル.1</div></div><button id="btn-buy-critRate" class="shop-btn" onclick="buyUpgrade('critRate')">30 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">クリティカルダメージ</div><div id="lv-critDmg" class="shop-desc">レベル.1</div></div><button id="btn-buy-critDmg" class="shop-btn" onclick="buyUpgrade('critDmg')">35 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">ファイアレート</div><div id="lv-rate" class="shop-desc">レベル.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">40 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">移動スピード</div><div id="lv-speed" class="shop-desc">レベル.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">30 C</button></div>
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">マルチショット</div><div id="lv-shot" class="shop-desc">1 バレット</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">150 C</button></div>
+                <!-- 新ステータス -->
+                <div class="shop-item"><div class="shop-info"><div class="shop-name">ロックオン可能距離</div><div id="lv-lockDist" class="shop-desc">レベル.1</div></div><button id="btn-buy-lockDist" class="shop-btn" onclick="buyUpgrade('lockDist')">20 C</button></div>
+            </div>
             
-            <div class="shop-section-title">ギア購入</div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">🧪 ナノリペアラー (アイテム)</div><div id="unl-item-rep" class="shop-lv">未購入</div></div><button id="btn-buy-item-rep" class="shop-btn" onclick="buyUpgrade('gear_item_rep')">100 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">🔋 CPオーバーチャージャー (アイテム)</div><div id="unl-item-cp" class="shop-lv">未購入</div></div><button id="btn-buy-item-cp" class="shop-btn" onclick="buyUpgrade('gear_item_cp')">120 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">⚡️ クロスレーザー (コマンド)</div><div id="unl-laser" class="shop-lv">未購入</div></div><button id="btn-buy-laser" class="shop-btn" onclick="buyUpgrade('cmd_laser')">180 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">🔥 ギガブラスト (コマンド)</div><div id="unl-blast" class="shop-lv">未購入</div></div><button id="btn-buy-blast" class="shop-btn" onclick="buyUpgrade('cmd_blast')">250 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">🔫 プラズマライフル (ウェポン)</div><div id="unl-wpn-plasma" class="shop-lv">未購入</div></div><button id="btn-buy-wpn-plasma" class="shop-btn" onclick="buyUpgrade('gear_wpn_plasma')">150 C</button></div>
-            <div class="shop-item"><div class="shop-info"><div class="shop-name">🔮 ヴォルテックスキャノン (ウェポン)</div><div id="unl-wpn-vortex" class="shop-lv">未購入</div></div><button id="btn-buy-wpn-vortex" class="shop-btn" onclick="buyUpgrade('gear_wpn_vortex')">240 C</button></div>
+            <!-- 右列：アイテム・コマンド・ギア (各枠カラー色分け) -->
+            <div class="shop-column">
+                <div class="shop-section-title">ガジェット＆アタッチメント</div>
+                
+                <!-- アイテム枠 (緑色枠) -->
+                <div class="shop-item border-item"><div class="shop-info"><div class="shop-name">🧪 ナノリペアラー (アイテム)</div><div class="shop-desc">ナノマシンを機体に注入し、戦闘中の「最大HP」を＋2底上げする補強コア。</div></div><button id="btn-buy-item-rep" class="shop-btn" onclick="buyUpgrade('gear_item_rep')">80 C</button></div>
+                <div class="shop-item border-item"><div class="shop-info"><div class="shop-name">🔋 CPオーバーチャージャー (アイテム)</div><div class="shop-desc">弾丸命中時のエネルギー吸着効率を向上し、コマンドポイントの回収率を上げる。</div></div><button id="btn-buy-item-cp" class="shop-btn" onclick="buyUpgrade('gear_item_cp')">90 C</button></div>
+                
+                <!-- コマンド枠 (黄色枠) -->
+                <div class="shop-item border-command"><div class="shop-info"><div class="shop-name">🌐 クロスレーザー (コマンド)</div><div class="shop-desc">[消費50CP] 自機を中心に十字4方向へ地形をも貫くエネルギーレーザーを一斉放射。</div></div><button id="btn-buy-laser" class="shop-btn" onclick="buyUpgrade('cmd_laser')">120 C</button></div>
+                <div class="shop-item border-command"><div class="shop-info"><div class="shop-name">🔥 ギガブラスト (コマンド)</div><div class="shop-desc">[消費90CP] 前方へ超ド級の濃縮プラズマ弾を放ち、着弾地点を巻き込む大爆発を起こす。</div></div><button id="btn-buy-blast" class="shop-btn" onclick="buyUpgrade('cmd_blast')">160 C</button></div>
+                
+                <!-- ギア（武器）枠 (赤枠) -->
+                <div class="shop-item border-gear"><div class="shop-info"><div class="shop-name">🔫 プラズマライフル (ギア)</div><div class="shop-desc">高圧プラズマを高速連射する主兵装。クリティカル発生確率が「15%」上乗せされる。</div></div><button id="btn-buy-wpn-plasma" class="shop-btn" onclick="buyUpgrade('gear_wpn_plasma')">110 C</button></div>
+                <div class="shop-item border-gear"><div class="shop-info"><div class="shop-name">🔮 ヴォルテックスキャノン (ギア)</div><div class="shop-desc">連射性能を犠牲に、威力を極限まで高めた重粒子重砲。常時「攻撃力」が＋2増加。</div></div><button id="btn-buy-wpn-vortex" class="shop-btn" onclick="buyUpgrade('gear_wpn_vortex')">180 C</button></div>
+            </div>
         </div>
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
-    <!-- 装備付け替えポップアップ -->
-    <div id="selector-popup">
-        <div class="selector-window">
-            <div id="selector-title" style="font-size:15px; font-weight:bold; color:#00ffff; margin-bottom:12px;">ギア選択</div>
-            <div id="selector-list"></div>
-            <button class="menu-btn back-btn" style="width:100%; margin-top:10px; border-radius:5px; font-size:13px;" onclick="closeSelector()">キャンセル</button>
-        </div>
-    </div>
-
-    <div id="option-menu" class="menu-screen" style="display:none;">
-        <div class="menu-subtitle">設定</div>
-        <div id="btn-mute" class="menu-btn" onclick="toggleMute()">オーディオ: オン</div>
-        <div class="menu-btn back-btn" onclick="resetProgress()" style="margin-top:20px; font-size:13px; opacity:0.7;">データリセット</div>
-        <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
-    </div>
-
-    <div id="result-screen" class="menu-screen" style="display:none;">
-        <div id="result-title"></div>
-        <div id="result-coin-gain" style="color:#ffd700; font-weight:bold; margin-bottom:15px;">+0 コイン獲得</div>
-        <div class="menu-btn" onclick="backToMenu()">メニューへ戻る</div>
-    </div>
-
-    <!-- ⚡️ 戦闘中コマンドメニュー -->
-    <div id="command-menu">
-        <div class="command-window">
-            <div style="font-size:18px; font-weight:bold; color:#ffd700; margin-bottom:4px;">コマンド選択</div>
-            <div id="command-current-cp" style="font-size:12px; color:#aaa; margin-bottom:15px;">CP: 0 / 100</div>
-            <div id="command-list-container"></div>
-            <button class="menu-btn back-btn" style="width:100%; margin-top:12px; border-radius:6px; font-size:14px;" onclick="closeCommandMenu()">キャンセル</button>
-        </div>
-    </div>
-
-    <!-- ゲーム内UIコンテナ -->
+    <!-- ゲーム内UI -->
     <div id="ingame-ui" style="display:none;">
-        <div id="tutorial-nav" style="position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(10,10,30,0.85); padding: 8px 20px; border-radius: 8px; border: 1px solid #00ffff; text-align: center; display: none; z-index: 10; pointer-events: none; white-space: nowrap; box-shadow: 0 0 10px rgba(0,255,255,0.3);">
-            指示が表示されます
-        </div>
-
+        <div id="tutorial-nav" style="position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(10,10,30,0.85); padding: 8px 20px; border-radius: 8px; border: 1px solid #00ffff; text-align: center; display: none; z-index: 10; pointer-events: none; white-space: nowrap; box-shadow: 0 0 10px rgba(0,255,255,0.3);">指示</div>
         <div class="ui-container">
             <div class="hp-group">
                 <div class="hp-label player-label">プレイヤー HP</div>
@@ -259,9 +226,7 @@
             </div>
         </div>
         <div id="lock-ui">ロックオンアクティブ</div>
-        
         <div id="joystick-container" class="controls"><div id="joystick-handle"></div></div>
-        
         <div class="action-zone">
             <div id="btn-shock" class="btn-action" onclick="openCommandMenu()">⚡️</div>
             <div id="btn-guard" class="btn-action">🛡️</div>
@@ -274,62 +239,43 @@
     //<![CDATA[
         let currentPilotName = "GUEST_PLAYER";
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
-        
-        let tutorialStep = 0;
-        let tutorialTimer = 0;
+        let tutorialStep = 0; let tutorialTimer = 0;
 
+        // ⚡️ 各ステータス上限値を30に引き上げ、価格スケーリングをマイルドに変更
         let upgrades = {
-            hp:        { lv: 1, max: 5, basePrice: 40,  scale: 1.5 },
-            shield:    { lv: 1, max: 5, basePrice: 60,  scale: 1.5 },
-            atk:       { lv: 1, max: 5, basePrice: 50,  scale: 1.5 },
-            critRate:  { lv: 1, max: 5, basePrice: 60,  scale: 1.5 },
-            critDmg:   { lv: 1, max: 5, basePrice: 70,  scale: 1.5 },
-            rate:      { lv: 1, max: 5, basePrice: 100, scale: 1.6 },
-            speed:     { lv: 1, max: 5, basePrice: 75,  scale: 1.4 },
-            shot:      { lv: 1, max: 3, basePrice: 300, scale: 2.0 },
-            gear_item_rep:   { lv: 0, max: 1, basePrice: 100, scale: 1.0 },
-            gear_item_cp:    { lv: 0, max: 1, basePrice: 120, scale: 1.0 },
-            cmd_laser:       { lv: 0, max: 1, basePrice: 180, scale: 1.0 },
-            cmd_blast:       { lv: 0, max: 1, basePrice: 250, scale: 1.0 },
-            gear_wpn_plasma: { lv: 0, max: 1, basePrice: 150, scale: 1.0 },
-            gear_wpn_vortex: { lv: 0, max: 1, basePrice: 240, scale: 1.0 }
+            hp:        { lv: 1, max: 30, basePrice: 20,  scale: 1.12 },
+            shield:    { lv: 1, max: 30, basePrice: 25,  scale: 1.12 },
+            atk:       { lv: 1, max: 30, basePrice: 20,  scale: 1.13 },
+            critRate:  { lv: 1, max: 30, basePrice: 30,  scale: 1.11 },
+            critDmg:   { lv: 1, max: 30, basePrice: 35,  scale: 1.11 },
+            rate:      { lv: 1, max: 30, basePrice: 40,  scale: 1.12 },
+            speed:     { lv: 1, max: 30, basePrice: 30,  scale: 1.10 },
+            shot:      { lv: 1, max: 3,  basePrice: 150, scale: 2.2 },
+            lockDist:  { lv: 1, max: 30, basePrice: 20,  scale: 1.10 }, // 新ステータス
+            gear_item_rep:   { lv: 0, max: 1, basePrice: 80,  scale: 1.0 },
+            gear_item_cp:    { lv: 0, max: 1, basePrice: 90,  scale: 1.0 },
+            cmd_laser:       { lv: 0, max: 1, basePrice: 120, scale: 1.0 },
+            cmd_blast:       { lv: 0, max: 1, basePrice: 160, scale: 1.0 },
+            gear_wpn_plasma: { lv: 0, max: 1, basePrice: 110, scale: 1.0 },
+            gear_wpn_vortex: { lv: 0, max: 1, basePrice: 180, scale: 1.0 }
         };
 
         let slotLimits = { item: 2, command: 2, weapon: 2 };
         let equippedGears = { item: [], command: ['shock'], weapon: ['std'] };
 
-        const ALL_GEARS = {
-            item: [
-                { id: 'rep', name: '🧪 ナノリペアラー', desc: 'HPを少し強化する' },
-                { id: 'cp', name: '🔋 CPオーバーチャージャー', desc: 'CP回復率アップ' }
-            ],
-            command: [
-                { id: 'shock', name: '⚡️ E-ショック', cp: 30, desc: '周囲に電撃波を発する' },
-                { id: 'laser', name: '🌐 クロスレーザー', cp: 50, desc: '4方向貫通レーザーを発射' },
-                { id: 'blast', name: '🔥 ギガブラスト', cp: 90, desc: '前方へ巨大爆破弾を発射' }
-            ],
-            weapon: [
-                { id: 'std', name: '🤖 スタンダード V1', desc: '標準エネルギーバルカン' },
-                { id: 'plasma', name: '🔫 プラズマライフル', desc: '高速・高クリティカル弾' },
-                { id: 'vortex', name: '🔮 ヴォルテックスキャノン', desc: '巨大な高負荷砲' }
-            ]
-        };
-
         function loginAndStart() {
             let inputName = document.getElementById('username-input').value.trim();
             if(!inputName) { inputName = "GUEST_PLAYER"; }
-            currentPilotName = inputName;
-            loadGame(currentPilotName);
+            currentPilotName = inputName; loadGame(currentPilotName);
             document.getElementById('current-user-tag').textContent = "パイロット: " + currentPilotName;
-            document.getElementById('login-screen').style.display = 'none';
-            switchScreen('main-menu');
+            document.getElementById('login-screen').style.display = 'none'; switchScreen('main-menu');
         }
         function logout() { document.getElementById('username-input').value = ""; document.getElementById('main-menu').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; }
         
         function saveGame() {
             const saveKey = 'CyberBattle_' + currentPilotName;
             const data = {
-                coins: globalCoins, lv_hp: upgrades.hp.lv, lv_shield: upgrades.shield.lv, lv_atk: upgrades.atk.lv, lv_critRate: upgrades.critRate.lv, lv_critDmg: upgrades.critDmg.lv, lv_rate: upgrades.rate.lv, lv_speed: upgrades.speed.lv, lv_shot: upgrades.shot.lv,
+                coins: globalCoins, lv_hp: upgrades.hp.lv, lv_shield: upgrades.shield.lv, lv_atk: upgrades.atk.lv, lv_critRate: upgrades.critRate.lv, lv_critDmg: upgrades.critDmg.lv, lv_rate: upgrades.rate.lv, lv_speed: upgrades.speed.lv, lv_shot: upgrades.shot.lv, lv_lockDist: upgrades.lockDist.lv,
                 unl_item_rep: upgrades.gear_item_rep.lv, unl_item_cp: upgrades.gear_item_cp.lv, unl_laser: upgrades.cmd_laser.lv, unl_blast: upgrades.cmd_blast.lv, unl_wpn_plasma: upgrades.gear_wpn_plasma.lv, unl_wpn_vortex: upgrades.gear_wpn_vortex.lv,
                 limits: slotLimits, equips: equippedGears
             };
@@ -341,204 +287,108 @@
             const saveKey = 'CyberBattle_' + pilotName; const saved = localStorage.getItem(saveKey);
             if (saved) {
                 const data = JSON.parse(saved); globalCoins = data.coins || 0;
-                if(data.lv_hp) upgrades.hp.lv = data.lv_hp; if(data.lv_shield) upgrades.shield.lv = data.lv_shield; if(data.lv_atk) upgrades.atk.lv = data.lv_atk; if(data.lv_critRate) upgrades.critRate.lv = data.lv_critRate; if(data.lv_critDmg) upgrades.critDmg.lv = data.lv_critDmg; if(data.lv_rate) upgrades.rate.lv = data.lv_rate; if(data.lv_speed) upgrades.speed.lv = data.lv_speed; if(data.lv_shot) upgrades.shot.lv = data.lv_shot;
+                if(data.lv_hp) upgrades.hp.lv = data.lv_hp; if(data.lv_shield) upgrades.shield.lv = data.lv_shield; if(data.lv_atk) upgrades.atk.lv = data.lv_atk; if(data.lv_critRate) upgrades.critRate.lv = data.lv_critRate; if(data.lv_critDmg) upgrades.critDmg.lv = data.lv_critDmg; if(data.lv_rate) upgrades.rate.lv = data.lv_rate; if(data.lv_speed) upgrades.speed.lv = data.lv_speed; if(data.lv_shot) upgrades.shot.lv = data.lv_shot; if(data.lv_lockDist) upgrades.lockDist.lv = data.lv_lockDist;
                 if(data.unl_item_rep) upgrades.gear_item_rep.lv = data.unl_item_rep; if(data.unl_item_cp) upgrades.gear_item_cp.lv = data.unl_item_cp; if(data.unl_laser) upgrades.cmd_laser.lv = data.unl_laser; if(data.unl_blast) upgrades.cmd_blast.lv = data.unl_blast; if(data.unl_wpn_plasma) upgrades.gear_wpn_plasma.lv = data.unl_wpn_plasma; if(data.unl_wpn_vortex) upgrades.gear_wpn_vortex.lv = data.unl_wpn_vortex;
                 if(data.limits) slotLimits = data.limits; if(data.equips) equippedGears = data.equips;
             }
         }
-        function resetProgress() { if(confirm(`パイロットデータを取り消します。よろしいですか？`)) { localStorage.removeItem('CyberBattle_' + currentPilotName); logout(); location.reload(); } }
-
-        let audioCtx = null; let bgmNode = null;
-        function initAudio() { if (audioCtx || isMuted) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); startBGM(); }
-        function toggleMute() { isMuted = !isMuted; document.getElementById('btn-mute').textContent = isMuted ? "オーディオ: オフ" : "オーディオ: オン"; if (isMuted) { stopBGM(); audioCtx = null; } else { initAudio(); } }
-        function playSound(type) {
-            if (!audioCtx || isMuted) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
-            if (type === 'shoot') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12); } 
-            else if (type === 'shock') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, now); osc.frequency.linearRampToValueAtTime(650, now + 0.28); gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.28); osc.start(now); osc.stop(now + 0.28); } 
-            else if (type === 'hit') { osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now); osc.frequency.linearRampToValueAtTime(40, now + 0.08); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
-            else if (type === 'crit') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(90, now); osc.frequency.linearRampToValueAtTime(900, now + 0.16); gain.gain.setValueAtTime(0.25, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.16); osc.start(now); osc.stop(now + 0.16); }
-            else if (type === 'guard') { osc.type = 'sine'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(440, now + 0.07); gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.07); osc.start(now); osc.stop(now + 0.07); } 
-            else if (type === 'clear') { osc.type = 'sine'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08); osc.frequency.setValueAtTime(784, now + 0.16); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); } 
-            else if (type === 'gameover') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(40, now + 0.4); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); }
-        }
-        function startBGM() {
-            if (!audioCtx) return; const bufferSize = audioCtx.sampleRate * 2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); const notes = [110, 110, 130, 110, 146, 110, 165, 130]; const stepLen = audioCtx.sampleRate * 0.25;
-            for (let i = 0; i < bufferSize; i++) { const step = Math.floor(i / stepLen) % notes.length; const freq = notes[step]; const t = i / audioCtx.sampleRate; data[i] = (Math.sin(2 * Math.PI * freq * t) + ((i % Math.floor(audioCtx.sampleRate / freq)) / (audioCtx.sampleRate / freq) - 0.5) * 0.2) * Math.max(0, 1 - ((i % stepLen) / stepLen) * 2.5) * 0.04; }
-            bgmNode = audioCtx.createBufferSource(); bgmNode.buffer = buffer; bgmNode.loop = true; bgmNode.connect(audioCtx.destination); bgmNode.start();
-        }
-        function stopBGM() { if (bgmNode) { try { bgmNode.stop(); } catch(e){} bgmNode = null; } }
 
         function switchScreen(screenId) {
             document.getElementById('main-menu').style.display = 'none'; document.getElementById('stage-select').style.display = 'none'; document.getElementById('status-shop').style.display = 'none'; document.getElementById('equipment-screen').style.display = 'none'; document.getElementById('option-menu').style.display = 'none'; document.getElementById('result-screen').style.display = 'none';
             document.getElementById(screenId).style.display = 'flex'; document.getElementById('main-coin').textContent = "コイン: " + globalCoins; document.getElementById('shop-coin').textContent = "コイン: " + globalCoins; document.getElementById('equip-coin').textContent = "コイン: " + globalCoins;
-            if (screenId === 'status-shop') updateShopUI();
-            if (screenId === 'equipment-screen') updateEquipmentUI();
+            if (screenId === 'status-shop') updateShopUI(); if (screenId === 'equipment-screen') updateEquipmentUI();
         }
         function getPrice(type) { const up = upgrades[type]; return Math.floor(up.basePrice * Math.pow(up.scale, up.lv - (type.startsWith('gear_') || type.startsWith('cmd_') ? 0 : 1))); }
         
         function updateShopUI() {
             Object.keys(upgrades).forEach(type => {
-                const up = upgrades[type]; const price = getPrice(type); let lvText = "レベル." + up.lv;
-                if (type === 'shot') lvText = up.lv + " way"; 
-                if (type === 'hp') lvText = `レベル.${up.lv} (${4 + up.lv} HP)`; 
-                if (type === 'shield') lvText = `レベル.${up.lv} (${2 + up.lv} シールド)`;
-                if (type === 'critRate') lvText = `レベル.${up.lv} (${10 + (up.lv-1)*5}%)`;
-                if (type === 'critDmg') lvText = `レベル.${up.lv} (${150 + (up.lv-1)*25}%)`;
-                
-                if (type.startsWith('gear_') || type.startsWith('cmd_')) {
-                    let elId = "unl-laser";
-                    if(type==='cmd_blast') elId="unl-blast"; if(type==='gear_item_rep') elId="unl-item-rep"; if(type==='gear_item_cp') elId="unl-item-cp"; if(type==='gear_wpn_plasma') elId="unl-wpn-plasma"; if(type==='gear_wpn_vortex') elId="unl-wpn-vortex";
-                    document.getElementById(elId).textContent = up.lv > 0 ? "解放済み" : "ロック";
-                    
+                const up = upgrades[type]; const price = getPrice(type);
+                if (!type.startsWith('gear_') && !type.startsWith('cmd_')) {
+                    document.getElementById('lv-' + type).textContent = `レベル.${up.lv} / ${up.max}`;
+                    const btn = document.getElementById('btn-buy-' + type);
+                    if (up.lv >= up.max) { btn.textContent = "MAX"; btn.disabled = true; } 
+                    else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
+                } else {
                     let btnId = "btn-buy-laser";
                     if(type==='cmd_blast') btnId="btn-buy-blast"; if(type==='gear_item_rep') btnId="btn-buy-item-rep"; if(type==='gear_item_cp') btnId="btn-buy-item-cp"; if(type==='gear_wpn_plasma') btnId="btn-buy-wpn-plasma"; if(type==='gear_wpn_vortex') btnId="btn-buy-wpn-vortex";
                     const btn = document.getElementById(btnId);
-                    if (up.lv > 0) { btn.textContent = "購入済み"; btn.disabled = true; }
+                    if (up.lv > 0) { btn.textContent = "購入済み"; btn.disabled = true; } 
                     else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
-                } else {
-                    document.getElementById('lv-' + type).textContent = lvText + (up.lv >= up.max ? " (マックス)" : "");
-                    const btn = document.getElementById('btn-buy-' + type); if (up.lv >= up.max) { btn.textContent = "マックス"; btn.disabled = true; } else { btn.textContent = price + " C"; btn.disabled = globalCoins < price; }
                 }
             });
         }
         function buyUpgrade(type) { const price = getPrice(type); if (globalCoins >= price && upgrades[type].lv < upgrades[type].max) { globalCoins -= price; upgrades[type].lv++; playSound('clear'); saveGame(); updateShopUI(); } }
 
         function getPlayerStat(type) {
-            const up = upgrades[type]; 
-            if (type === 'hp') { let v = 4 + up.lv; if(equippedGears.item.includes('rep')) v += 2; return v; }
-            if (type === 'shield') return 2 + up.lv; 
-            if (type === 'atk') { let v = up.lv; if(equippedGears.weapon.includes('vortex')) v += 2; return v; }
-            if (type === 'critRate') { let v = 10 + (up.lv - 1) * 5; if(equippedGears.weapon.includes('plasma')) v += 15; return v; }
-            if (type === 'critDmg') return 150 + (up.lv - 1) * 25; 
-            if (type === 'rate') return Math.max(8, 26 - up.lv * 4); 
-            if (type === 'speed') return 0.04 + up.lv * 0.01; 
-            if (type === 'shot') return up.lv; 
+            const up = upgrades[type];
+            if (type === 'hp') { let v = 4 + Math.floor(up.lv * 0.5); if(equippedGears.item.includes('rep')) v += 2; return v; }
+            if (type === 'shield') return 2 + Math.floor(up.lv * 0.4);
+            if (type === 'atk') { let v = 1 + Math.floor(up.lv * 0.3); if(equippedGears.weapon.includes('vortex')) v += 2; return v; }
+            if (type === 'critRate') { let v = 10 + (up.lv - 1) * 2; if(equippedGears.weapon.includes('plasma')) v += 15; return v; }
+            if (type === 'critDmg') return 150 + (up.lv - 1) * 10;
+            if (type === 'rate') return Math.max(6, 26 - Math.floor(up.lv * 0.6));
+            if (type === 'speed') return 0.04 + up.lv * 0.003;
+            if (type === 'shot') return up.lv;
+            if (type === 'lockDist') return 3.2 + up.lv * 0.25; // 初期値3.2、MAXで10.4
             return 1;
         }
 
         function updateEquipmentUI() {
-            document.getElementById('stat-val-hp').textContent = getPlayerStat('hp');
-            document.getElementById('stat-val-shield').textContent = getPlayerStat('shield');
-            document.getElementById('stat-val-atk').textContent = getPlayerStat('atk');
-            document.getElementById('stat-val-critRate').textContent = getPlayerStat('critRate') + '%';
-            document.getElementById('stat-val-critDmg').textContent = getPlayerStat('critDmg') + '%';
-            document.getElementById('stat-val-rate').textContent = getPlayerStat('rate');
-            document.getElementById('stat-val-speed').textContent = getPlayerStat('speed').toFixed(3);
-            document.getElementById('stat-val-shot').textContent = getPlayerStat('shot') + ' way';
-
+            document.getElementById('stat-val-hp').textContent = getPlayerStat('hp'); document.getElementById('stat-val-shield').textContent = getPlayerStat('shield'); document.getElementById('stat-val-atk').textContent = getPlayerStat('atk'); document.getElementById('stat-val-critRate').textContent = getPlayerStat('critRate') + '%'; document.getElementById('stat-val-critDmg').textContent = getPlayerStat('critDmg') + '%'; document.getElementById('stat-val-rate').textContent = getPlayerStat('rate'); document.getElementById('stat-val-speed').textContent = getPlayerStat('speed').toFixed(3); document.getElementById('stat-val-shot').textContent = getPlayerStat('shot') + ' way';
+            document.getElementById('stat-val-lockDist').textContent = getPlayerStat('lockDist').toFixed(2);
             ['item', 'command', 'weapon'].forEach(cat => {
-                const container = document.getElementById(`container-${cat}-slots`); container.innerHTML = "";
-                const currentLimit = slotLimits[cat];
-                
+                const container = document.getElementById(`container-${cat}-slots`); container.innerHTML = ""; const currentLimit = slotLimits[cat];
                 for(let i=0; i<4; i++) {
                     const slotDiv = document.createElement('div');
                     if (i >= currentLimit) { slotDiv.className = "equip-slot locked"; slotDiv.textContent = "🔒"; } 
                     else {
-                        slotDiv.className = "equip-slot";
-                        const activeEqId = equippedGears[cat][i];
-                        if (activeEqId) {
-                            slotDiv.classList.add('active');
-                            const master = ALL_GEARS[cat].find(g => g.id === activeEqId);
-                            slotDiv.innerHTML = `<span style="font-size:8px; color:#ffd700;">[${i+1}]</span><div style="text-align:center; padding:2px;">${master ? master.name.split(' ')[1] : activeEqId}</div>`;
-                        } else { slotDiv.textContent = `[空]`; }
+                        slotDiv.className = "equip-slot"; const activeEqId = equippedGears[cat][i];
+                        if (activeEqId) { slotDiv.classList.add('active'); const master = ALL_GEARS[cat].find(g => g.id === activeEqId); slotDiv.innerHTML = `<span style="font-size:8px; color:#ffd700;">[${i+1}]</span><div style="text-align:center; padding:2px;">${master ? master.name.split(' ')[1] : activeEqId}</div>`; } else { slotDiv.textContent = `[空]`; }
                         slotDiv.onclick = () => openSelector(cat, i);
-                    }
-                    container.appendChild(slotDiv);
+                    } container.appendChild(slotDiv);
                 }
-
                 const expBtn = document.getElementById(`btn-expand-${cat}`);
-                if(currentLimit >= 4) { expBtn.textContent = "スロット最大"; expBtn.disabled = true; } 
-                else { const cost = currentLimit === 2 ? 200 : 400; expBtn.textContent = `拡張 (${cost}C)`; expBtn.disabled = globalCoins < cost; }
+                if(currentLimit >= 4) { expBtn.textContent = "最大"; expBtn.disabled = true; } else { const cost = currentLimit === 2 ? 150 : 300; expBtn.textContent = `拡張 (${cost}C)`; expBtn.disabled = globalCoins < cost; }
             });
         }
 
-        function expandSlots(cat) {
-            const currentLimit = slotLimits[cat]; if(currentLimit >= 4) return;
-            const cost = currentLimit === 2 ? 200 : 400;
-            if(globalCoins >= cost) { globalCoins -= cost; slotLimits[cat]++; playSound('clear'); saveGame(); updateEquipmentUI(); document.getElementById('equip-coin').textContent = "コイン: " + globalCoins; }
-        }
+        function expandSlots(cat) { const currentLimit = slotLimits[cat]; if(currentLimit >= 4) return; const cost = currentLimit === 2 ? 150 : 300; if(globalCoins >= cost) { globalCoins -= cost; slotLimits[cat]++; playSound('clear'); saveGame(); updateEquipmentUI(); document.getElementById('equip-coin').textContent = "コイン: " + globalCoins; } }
 
         let currentSelectingCategory = ''; let currentSelectingIndex = -1;
         function openSelector(category, index) {
-            currentSelectingCategory = category; currentSelectingIndex = index;
-            const popup = document.getElementById('selector-popup');
-            const listContainer = document.getElementById('selector-list');
-            listContainer.innerHTML = "";
-            document.getElementById('selector-title').textContent = `ギア選択 [スロット ${index+1}]`;
-
+            currentSelectingCategory = category; currentSelectingIndex = index; const popup = document.getElementById('selector-popup'); const listContainer = document.getElementById('selector-list'); listContainer.innerHTML = ""; document.getElementById('selector-title').textContent = `ギア選択 [スロット ${index+1}]`;
             if (!( (category==='command' || category==='weapon') && index === 0 )) {
                 const noneItem = document.createElement('div'); noneItem.className = "selector-item"; noneItem.style.color = "#ff4444"; noneItem.innerHTML = `<span>[ 外す ]</span>`;
-                noneItem.onclick = () => { equippedGears[category][index] = null; equippedGears[category] = equippedGears[category].filter(x => x !== null); playSound('guard'); closeSelector(); updateEquipmentUI(); saveGame(); };
-                listContainer.appendChild(noneItem);
+                noneItem.onclick = () => { equippedGears[category][index] = null; equippedGears[category] = equippedGears[category].filter(x => x !== null); playSound('guard'); closeSelector(); updateEquipmentUI(); saveGame(); }; listContainer.appendChild(noneItem);
             }
-
             ALL_GEARS[category].forEach(gear => {
                 let isOwned = false;
-                if(category==='command') {
-                    if(gear.id === 'shock') isOwned = true;
-                    if(gear.id === 'laser' && upgrades.cmd_laser.lv > 0) isOwned = true;
-                    if(gear.id === 'blast' && upgrades.cmd_blast.lv > 0) isOwned = true;
-                } else if(category==='item') {
-                    if(gear.id === 'rep' && upgrades.gear_item_rep.lv > 0) isOwned = true;
-                    if(gear.id === 'cp' && upgrades.gear_item_cp.lv > 0) isOwned = true;
-                } else if(category==='weapon') {
-                    if(gear.id === 'std') isOwned = true;
-                    if(gear.id === 'plasma' && upgrades.gear_wpn_plasma.lv > 0) isOwned = true;
-                    if(gear.id === 'vortex' && upgrades.gear_wpn_vortex.lv > 0) isOwned = true;
-                }
-
-                if(!isOwned) return;
-                if (equippedGears[category].includes(gear.id) && equippedGears[category][index] !== gear.id) return;
-
-                const itemDiv = document.createElement('div'); itemDiv.className = "selector-item";
-                itemDiv.innerHTML = `<span>${gear.name}</span><span style="font-size:10px; color:#aaa;">${gear.desc}</span>`;
-                itemDiv.onclick = () => { equippedGears[category][index] = gear.id; playSound('clear'); closeSelector(); updateEquipmentUI(); saveGame(); };
-                listContainer.appendChild(itemDiv);
-            });
-
-            popup.style.display = 'flex';
+                if(category==='command') { if(gear.id === 'shock') isOwned = true; if(gear.id === 'laser' && upgrades.cmd_laser.lv > 0) isOwned = true; if(gear.id === 'blast' && upgrades.cmd_blast.lv > 0) isOwned = true; } 
+                else if(category==='item') { if(gear.id === 'rep' && upgrades.gear_item_rep.lv > 0) isOwned = true; if(gear.id === 'cp' && upgrades.gear_item_cp.lv > 0) isOwned = true; } 
+                else if(category==='weapon') { if(gear.id === 'std') isOwned = true; if(gear.id === 'plasma' && upgrades.gear_wpn_plasma.lv > 0) isOwned = true; if(gear.id === 'vortex' && upgrades.gear_wpn_vortex.lv > 0) isOwned = true; }
+                if(!isOwned) return; if (equippedGears[category].includes(gear.id) && equippedGears[category][index] !== gear.id) return;
+                const itemDiv = document.createElement('div'); itemDiv.className = "selector-item"; itemDiv.innerHTML = `<span>${gear.name}</span><span style="font-size:10px; color:#aaa;">${gear.desc}</span>`;
+                itemDiv.onclick = () => { equippedGears[category][index] = gear.id; playSound('clear'); closeSelector(); updateEquipmentUI(); saveGame(); }; listContainer.appendChild(itemDiv);
+            }); popup.style.display = 'flex';
         }
         function closeSelector() { document.getElementById('selector-popup').style.display = 'none'; }
 
         // --- Three.js Setup ---
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0e0e1a);
         const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const canvas = document.getElementById('game-canvas');
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false });
-        renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(1);
-
-        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-        const dirLight = new THREE.DirectionalLight(0xddffff, 0.8); dirLight.position.set(5, 12, 8); scene.add(dirLight);
-        const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
-        const gridHelper = new THREE.GridHelper(50, 50, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
-
-        function createRobot(mainColor, eyeColor, isPlayerMech = false, sizeScale = 1) {
-            const g = new THREE.Group(); const m = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.15, metalness: 0.5 }); const em = new THREE.MeshStandardMaterial({ color: eyeColor, roughness: 0.1 }); const jm = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6 });
-            const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.7, 0.6), m); body.position.y = 0.65; g.add(body);
-            const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.4), m); head.position.y = 1.1; g.add(head);
-            const eye = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.1), em); eye.position.set(0, 1.15, -0.21); g.add(eye);
-            const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), m); leftArm.position.set(0.55, 0.65, 0); g.add(leftArm);
-            if (isPlayerMech) {
-                const rightArmGroup = new THREE.Group(); rightArmGroup.position.set(-0.55, 0.65, 0);
-                const gunBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0x555566, metalness: 0.8 })); gunBody.rotation.x = Math.PI / 2; gunBody.position.set(0, 0, -0.3); rightArmGroup.add(gunBody);
-                const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.05, 16), new THREE.MeshBasicMaterial({ color: 0x00ffff })); muzzle.rotation.x = Math.PI / 2; muzzle.position.set(0, 0, -0.62); rightArmGroup.add(muzzle); g.add(rightArmGroup);
-            } else { const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), m); rightArm.position.set(-0.55, 0.65, 0); g.add(rightArm); }
-            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.3, 16), jm); leg.rotation.z = Math.PI / 2; leg.position.y = 0.15; g.add(leg);
-            
-            if (sizeScale !== 1) { g.scale.set(sizeScale, sizeScale, sizeScale); }
-            return g;
-        }
+        const canvas = document.getElementById('game-canvas'); const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(1);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7)); const dirLight = new THREE.DirectionalLight(0xddffff, 0.8); dirLight.position.set(5, 12, 8); scene.add(dirLight);
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
+        const gridHelper = new THREE.GridHelper(60, 60, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
 
         const player = createRobot(0x00ff88, 0x00ffff, true); scene.add(player);
         const hoverEffects = [];
         for(let i=0; i<3; i++) {
             const hRing = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.4, 16), new THREE.MeshBasicMaterial({ color: 0x00ffff, side: THREE.DoubleSide, transparent: true, opacity: 0 })); hRing.rotation.x = -Math.PI / 2; hRing.position.y = 0.02; scene.add(hRing); hoverEffects.push({ mesh: hRing, scale: 1 + i * 0.5, opacity: 0.6 - i * 0.2 });
         }
-
         const shieldMesh = new THREE.Mesh(new THREE.SphereGeometry(1.1, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00bfff, transparent: true, opacity: 0, wireframe: true })); player.add(shieldMesh); shieldMesh.position.y = 0.65;
         const shockVisualMesh = new THREE.Mesh(new THREE.SphereGeometry(3.5, 24, 24), new THREE.MeshBasicMaterial({ color: '#ffd700', transparent: true, opacity: 0, wireframe: true })); player.add(shockVisualMesh); shockVisualMesh.position.y = 0.65;
         const lockMarker = new THREE.Mesh(new THREE.RingGeometry(0.8, 0.9, 4), new THREE.MeshBasicMaterial({ color: 0x00ffaa, side: THREE.DoubleSide, transparent: true, opacity: 0 })); lockMarker.rotation.x = -Math.PI / 2; lockMarker.position.y = 0.05; scene.add(lockMarker);
-
         camera.position.set(0, 5, 7); camera.lookAt(player.position);
 
         const clock = new THREE.Clock(); const TIME_SCALE = 60;
@@ -548,11 +398,12 @@
         const enemies = []; const bullets = []; const damageTexts = [];
         let playerAttackCooldown = 0; let shockVisualTimer = 0; let playerRotation = 0;
 
+        // ⚡️ ロックオン機能に「新ステータス：ロックオン距離」を適用
         function toggleClosestLockOn() {
-            if (!activeBattle || isCommandPaused) return;
-            initAudio();
+            if (!activeBattle || isCommandPaused) return; initAudio();
             if (lockedEnemyIndex !== -1) { lockedEnemyIndex = -1; updateInGameUI(); return; }
-            let minDistance = Infinity; let closestIndex = -1;
+            let minDistance = getPlayerStat('lockDist'); // 動的制限
+            let closestIndex = -1;
             for (let i = 0; i < enemies.length; i++) {
                 if (enemies[i].hp <= 0) continue;
                 const dist = player.position.distanceTo(enemies[i].mesh.position);
@@ -562,23 +413,10 @@
             updateInGameUI();
         }
 
-        // ⚡&nbsp;修正ポイント：ダメージ表記をより長く表示し、ブレをなくすため構造体に格納（寿命は1.2秒）
         function createDamageText(enemyRef, amount, isCrit) {
-            const container = document.getElementById('damage-container');
-            const el = document.createElement('div');
-            el.className = 'damage-indicator';
-            el.style.color = isCrit ? '#ff3333' : '#00ffff';
-            el.style.fontSize = isCrit ? '26px' : '18px';
-            el.textContent = amount + (isCrit ? '!!' : '');
-            container.appendChild(el);
-            
-            damageTexts.push({ 
-                element: el, 
-                enemy: enemyRef, // 敵機を直接追従ターゲットにする
-                offsetY: 1.4,     // 頭上の高さオフセット
-                age: 0, 
-                maxAge: 1.2      // 1.2秒間表示
-            });
+            const container = document.getElementById('damage-container'); const el = document.createElement('div'); el.className = 'damage-indicator';
+            el.style.color = isCrit ? '#ff3333' : '#00ffff'; el.style.fontSize = isCrit ? '26px' : '18px'; el.textContent = amount + (isCrit ? '!!' : ''); container.appendChild(el);
+            damageTexts.push({ element: el, enemy: enemyRef, offsetY: 1.4, age: 0, maxAge: 1.2 }); // 1.2秒に延長
         }
 
         function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null, size = 0.15, damageOverride = null, colorOverride = null) {
@@ -586,9 +424,7 @@
             if (isPlayer) {
                 if (equippedGears.weapon.includes('plasma')) { bColor = 0xff00ff; size = 0.12; } 
                 else if (equippedGears.weapon.includes('vortex')) { bColor = 0x00ffaa; size = 0.3; }
-            }
-            if (colorOverride !== null) bColor = colorOverride;
-
+            } if (colorOverride !== null) bColor = colorOverride;
             const bMesh = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshBasicMaterial({ color: bColor }));
             if (isPlayer) {
                 const offsetX = -0.55 * Math.cos(playerRotation) - (-0.62) * Math.sin(playerRotation); const offsetZ = -0.55 * Math.sin(playerRotation) + (-0.62) * Math.cos(playerRotation); bMesh.position.set(player.position.x + offsetX, 0.65, player.position.z + offsetZ);
@@ -598,57 +434,34 @@
 
         function playerShoot() {
             if (!activeBattle || isCommandPaused || playerAttackCooldown > 0 || isGuarding) return;
-            
-            let baseAngle = 0;
-            const targetEnemy = (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex]) ? enemies[lockedEnemyIndex] : null;
-            
+            let baseAngle = 0; const targetEnemy = (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex]) ? enemies[lockedEnemyIndex] : null;
             if (targetEnemy && targetEnemy.hp > 0) {
-                const tdx = targetEnemy.mesh.position.x - player.position.x;
-                const tdz = targetEnemy.mesh.position.z - player.position.z;
-                baseAngle = Math.atan2(tdz, tdx);
+                const tdx = targetEnemy.mesh.position.x - player.position.x; const tdz = targetEnemy.mesh.position.z - player.position.z; baseAngle = Math.atan2(tdz, tdx);
             } else {
-                const bdx = -Math.sin(playerRotation);
-                const bdz = -Math.cos(playerRotation);
-                baseAngle = Math.atan2(bdz, bdx);
+                const bdx = -Math.sin(playerRotation); const bdz = -Math.cos(playerRotation); baseAngle = Math.atan2(bdz, bdx);
             }
-
-            const ways = getPlayerStat('shot');
-            playSound('shoot');
-            
-            if (ways === 1) {
-                spawnBullet(player.position.x, player.position.z, Math.cos(baseAngle), Math.sin(baseAngle), true, targetEnemy ? targetEnemy.mesh : null);
-            } else {
-                const spread = 0.22; 
-                for(let i=0; i<ways; i++) {
-                    const angle = baseAngle + (i - (ways-1)/2) * spread;
-                    spawnBullet(player.position.x, player.position.z, Math.cos(angle), Math.sin(angle), true, targetEnemy ? targetEnemy.mesh : null);
-                }
+            const ways = getPlayerStat('shot'); playSound('shoot');
+            if (ways === 1) { spawnBullet(player.position.x, player.position.z, Math.cos(baseAngle), Math.sin(baseAngle), true, targetEnemy ? targetEnemy.mesh : null); } 
+            else {
+                const spread = 0.22; for(let i=0; i<ways; i++) { const angle = baseAngle + (i - (ways-1)/2) * spread; spawnBullet(player.position.x, player.position.z, Math.cos(angle), Math.sin(angle), true, targetEnemy ? targetEnemy.mesh : null); }
             }
             playerAttackCooldown = getPlayerStat('rate');
         }
 
         function openCommandMenu() {
-            if (!activeBattle || isCommandPaused) return;
-            initAudio(); isCommandPaused = true;
+            if (!activeBattle || isCommandPaused) return; initAudio(); isCommandPaused = true;
             document.getElementById('command-current-cp').textContent = `CP: ${playerCP} / ${maxPlayerCP}`;
             const container = document.getElementById('command-list-container'); container.innerHTML = "";
-
             const cmds = ALL_GEARS.command.filter(c => equippedGears.command.includes(c.id));
-
-            if(cmds.length === 0) {
-                container.innerHTML = `<div style="font-size:12px; color:#ff4444; padding:10px;">装備しているコマンドがありません</div>`;
-            } else {
+            if(cmds.length === 0) { container.innerHTML = `<div style="font-size:12px; color:#ff4444; padding:10px;">装備していません</div>`; } 
+            else {
                 cmds.forEach(cmd => {
-                    const btn = document.createElement('button'); btn.className = 'command-item-btn';
-                    btn.disabled = playerCP < cmd.cp;
+                    const btn = document.createElement('button'); btn.className = 'command-item-btn'; btn.disabled = playerCP < cmd.cp;
                     btn.innerHTML = `<span>${cmd.name}<br><small style="color:#8a8aaf; font-weight:normal;">${cmd.desc}</small></span> <span style="color:${playerCP>=cmd.cp?'#ffd700':'#666'}">${cmd.cp} CP</span>`;
-                    btn.onclick = () => { executeCommand(cmd.id, cmd.cp); closeCommandMenu(); };
-                    container.appendChild(btn);
+                    btn.onclick = () => { executeCommand(cmd.id, cmd.cp); closeCommandMenu(); }; container.appendChild(btn);
                 });
-            }
-            document.getElementById('command-menu').style.display = 'flex';
+            } document.getElementById('command-menu').style.display = 'flex';
         }
-
         function closeCommandMenu() { isCommandPaused = false; document.getElementById('command-menu').style.display = 'none'; }
 
         function executeCommand(id, cpCost) {
@@ -658,33 +471,25 @@
                 enemies.forEach((e, idx) => {
                     if (e.hp <= 0) return;
                     if (player.position.distanceTo(e.mesh.position) <= shockRadius) {
-                        let baseAtk = getPlayerStat('atk') * 2;
-                        let isCrit = Math.random() * 100 < getPlayerStat('critRate');
-                        let finalDmg = isCrit ? Math.floor(baseAtk * getPlayerStat('critDmg') / 100) : baseAtk;
+                        let baseAtk = getPlayerStat('atk') * 2; let isCrit = Math.random() * 100 < getPlayerStat('critRate'); let finalDmg = isCrit ? Math.floor(baseAtk * getPlayerStat('critDmg') / 100) : baseAtk;
                         e.hp -= finalDmg; createDamageText(e, finalDmg, isCrit); playSound(isCrit ? 'crit' : 'hit');
                         e.mesh.position.x += (e.mesh.position.x - player.position.x) * 0.6; e.mesh.position.z += (e.mesh.position.z - player.position.z) * 0.6;
                         if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === idx) lockedEnemyIndex = -1; }
                     }
                 });
-            } 
-            else if (id === 'laser') {
-                playSound('shock'); const dirs = [{x:1,z:0},{x:-1,z:0},{x:0,z:1},{x:0,z:-1}];
-                dirs.forEach(d => spawnBullet(player.position.x, player.position.z, d.x, d.z, true, null, 0.22, getPlayerStat('atk') * 2));
-            } 
-            else if (id === 'blast') {
-                playSound('shock'); const bdx = -Math.sin(playerRotation); const bdz = -Math.cos(playerRotation);
-                spawnBullet(player.position.x, player.position.z, bdx, bdz, true, null, 0.5, getPlayerStat('atk') * 4);
+            } else if (id === 'laser') {
+                playSound('shock'); const dirs = [{x:1,z:0},{x:-1,z:0},{x:0,z:1},{x:0,z:-1}]; dirs.forEach(d => spawnBullet(player.position.x, player.position.z, d.x, d.z, true, null, 0.22, getPlayerStat('atk') * 2));
+            } else if (id === 'blast') {
+                playSound('shock'); const bdx = -Math.sin(playerRotation); const bdz = -Math.cos(playerRotation); spawnBullet(player.position.x, player.position.z, bdx, bdz, true, null, 0.5, getPlayerStat('atk') * 4);
             }
         }
 
-        // ⚡️ 修正：全ステージで敵の数を大幅増量して再編成
+        // ⚡️ 修正：全9ステージ構成、敵の大幅増量と、獲得コインの大幅減額（難易度アップ）
         function startBattle(stageNum) {
             currentStage = stageNum; activeBattle = true; isCommandPaused = false;
             maxPlayerHP = getPlayerStat('hp'); playerHP = maxPlayerHP; playerCP = 0;
             maxShieldHP = getPlayerStat('shield'); shieldHP = maxShieldHP; isShieldBroken = false; isGuarding = false; lockedEnemyIndex = -1; shockVisualTimer = 0;
             player.position.set(0, 0, 0); player.rotation.y = 0; playerRotation = 0; scene.add(player); inputX = 0; inputZ = 0; enemies.forEach(e => scene.remove(e.mesh)); enemies.length = 0; bullets.forEach(b => scene.remove(b.mesh)); bullets.length = 0;
-            
-            // 既存の古いテキスト表示をクリア
             document.getElementById('damage-container').innerHTML = ""; damageTexts.length = 0;
             const navEl = document.getElementById('tutorial-nav');
             
@@ -695,62 +500,81 @@
             } else {
                 tutorialStep = 0; navEl.style.display = 'none';
                 
-                if (stageNum === 1) {
-                    // 通常機3体編成
+                if (stageNum === 1) { // 通常機 3体
                     for(let i=0; i<3; i++) {
-                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 1) * 3, 0, -7 - i); scene.add(m);
+                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 1) * 3, 0, -7); scene.add(m);
                         enemies.push({ mesh: m, hp: 6, shootTimer: 45 + i*10, type: 'std', speed: 0.015 });
                     }
                 } 
-                else if (stageNum === 2) {
-                    // 合計5体の小隊戦
+                else if (stageNum === 2) { // 通常機 5体小隊
                     for(let i=0; i<5; i++) {
-                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 2) * 2.8, 0, -8 - (i % 2) * 2); scene.add(m);
-                        enemies.push({ mesh: m, hp: 8, shootTimer: 35 + Math.random() * 40, type: 'std', speed: 0.016 });
+                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 2) * 2.8, 0, -8 - (i%2)*2); scene.add(m);
+                        enemies.push({ mesh: m, hp: 8, shootTimer: 35 + Math.random()*30, type: 'std', speed: 0.016 });
                     }
                 } 
-                else if (stageNum === 3) {
-                    // 中ボス：センチネル2体＋護衛機3体
-                    for(let i=0; i<2; i++) {
-                        const boss = createRobot(0x8b008b, 0x00ffff, false, 1.4); boss.position.set(i===0 ? -3 : 3, 0, -11); scene.add(boss);
-                        enemies.push({ mesh: boss, hp: 18, shootTimer: 55, type: 'cluster', speed: 0.009 });
-                    }
-                    for(let i=0; i<3; i++) {
-                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 1) * 4, 0, -7); scene.add(m);
-                        enemies.push({ mesh: m, hp: 7, shootTimer: 30, type: 'std', speed: 0.018 });
-                    }
-                } 
-                else if (stageNum === 4) {
-                    // ヴァルキリー高速強襲小隊 (4体)
+                else if (stageNum === 3) { // 中ボス1体 + 通常4体
+                    const boss = createRobot(0x8b008b, 0x00ffff, false, 1.4); boss.position.set(0, 0, -11); scene.add(boss);
+                    enemies.push({ mesh: boss, hp: 22, shootTimer: 55, type: 'cluster', speed: 0.009 });
                     for(let i=0; i<4; i++) {
-                        const m = createRobot(0xffaa00, 0xff0055, false, 1.1); m.position.set((i - 1.5) * 3.5, 0, -10 + (i % 2) * 2); scene.add(m);
-                        enemies.push({ mesh: m, hp: 14, shootTimer: 35 + i * 5, type: 'valkyrie', speed: 0.033 });
+                        const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 1.5) * 3.5, 0, -7); scene.add(m);
+                        enemies.push({ mesh: m, hp: 7, shootTimer: 40, type: 'std', speed: 0.018 });
                     }
                 } 
-                else if (stageNum === 5) {
-                    // 最終戦：オメガ要塞1体＋ヴァルキリー2体＋防衛型2体（計5体の艦隊ボス戦）
-                    const bossMesh = createRobot(0x222222, 0xff0000, false, 2.2); bossMesh.position.set(0, 0, -14); scene.add(bossMesh);
-                    enemies.push({ mesh: bossMesh, hp: 45, shootTimer: 40, type: 'omega', speed: 0.009 });
-                    
-                    // 前線高速護衛 (ヴァルキリー)
+                else if (stageNum === 4) { // 高速強襲機 4体
+                    for(let i=0; i<4; i++) {
+                        const m = createRobot(0xffaa00, 0xff0055, false, 1.1); m.position.set((i - 1.5) * 4, 0, -10); scene.add(m);
+                        enemies.push({ mesh: m, hp: 15, shootTimer: 30, type: 'valkyrie', speed: 0.033 });
+                    }
+                } 
+                else if (stageNum === 5) { // 前期最終ボス1体 + 随伴4体
+                    const bossMesh = createRobot(0x222222, 0xff0000, false, 2.0); bossMesh.position.set(0, 0, -14); scene.add(bossMesh);
+                    enemies.push({ mesh: bossMesh, hp: 45, shootTimer: 40, type: 'omega', speed: 0.008 });
                     for(let i=0; i<2; i++) {
                         const m = createRobot(0xffaa00, 0xff0055, false, 1.1); m.position.set(i===0?-5:5, 0, -9); scene.add(m);
                         enemies.push({ mesh: m, hp: 12, shootTimer: 30, type: 'valkyrie', speed: 0.03 });
                     }
-                    // 重装防衛随伴 (クラスター)
                     for(let i=0; i<2; i++) {
-                        const m = createRobot(0x8b008b, 0x00ffff, false, 1.3); m.position.set(i===0?-3:3, 0, -12); scene.add(m);
-                        enemies.push({ mesh: m, hp: 15, shootTimer: 50, type: 'cluster', speed: 0.01 });
+                        const m = createRobot(0x8b008b, 0x00ffff, false, 1.3); m.position.set(i===0?-2:2, 0, -11); scene.add(m);
+                        enemies.push({ mesh: m, hp: 14, shootTimer: 50, type: 'cluster', speed: 0.01 });
                     }
                 }
-            }
-            
-            document.getElementById('stage-select').style.display = 'none'; document.getElementById('ingame-ui').style.display = 'block'; updateInGameUI(); initAudio(); clock.getDelta();
+                else if (stageNum === 6) { // 新鋭電子妨害部隊 (移動遅延弾を模した高頻度弾) 6体
+                    for(let i=0; i<6; i++) {
+                        const m = createRobot(0x4b0082, 0x00ffaa, false, 1.1); m.position.set((i - 2.5) * 2.5, 0, -9 - (i%2)*2); scene.add(m);
+                        enemies.push({ mesh: m, hp: 16, shootTimer: 20 + Math.random()*20, type: 'std', speed: 0.022 });
+                    }
+                }
+                else if (stageNum === 7) { // 複合中ボス師団 (クラスター3体 + ヴァルキリー3体)
+                    for(let i=0; i<3; i++) {
+                        const c = createRobot(0x8b008b, 0x00ffff, false, 1.4); c.position.set((i - 1) * 5, 0, -12); scene.add(c);
+                        enemies.push({ mesh: c, hp: 25, shootTimer: 45, type: 'cluster', speed: 0.01 });
+                    }
+                    for(let i=0; i<3; i++) {
+                        const v = createRobot(0xffaa00, 0xff0055, false, 1.1); v.position.set((i - 1) * 4, 0, -8); scene.add(v);
+                        enemies.push({ mesh: v, hp: 18, shootTimer: 25, type: 'valkyrie', speed: 0.036 });
+                    }
+                }
+                else if (stageNum === 8) { // オメガフォートレス 2体同時襲来
+                    for(let i=0; i<2; i++) {
+                        const boss = createRobot(0x331111, 0xff0033, false, 1.9); boss.position.set(i===0?-4:4, 0, -14); scene.add(boss);
+                        enemies.push({ mesh: boss, hp: 40, shootTimer: 40 + i*15, type: 'omega', speed: 0.01 });
+                    }
+                }
+                else if (stageNum === 9) { // 最終超絶対決：真オメガ・デストロイヤー 2体 ＋ 精鋭護衛群 4体
+                    for(let i=0; i<2; i++) {
+                        const superBoss = createRobot(0x000000, 0xff0000, false, 2.3); superBoss.position.set(i===0?-5:5, 0, -15); scene.add(superBoss);
+                        enemies.push({ mesh: superBoss, hp: 60, shootTimer: 35 + i*10, type: 'omega', speed: 0.012 });
+                    }
+                    for(let i=0; i<4; i++) {
+                        const guard = createRobot(0xffaa00, 0xff0055, false, 1.2); guard.position.set((i - 1.5) * 4, 0, -10); scene.add(guard);
+                        enemies.push({ mesh: guard, hp: 22, shootTimer: 25, type: 'valkyrie', speed: 0.038 });
+                    }
+                }
+            } document.getElementById('stage-select').style.display = 'none'; document.getElementById('ingame-ui').style.display = 'block'; updateInGameUI(); initAudio(); clock.getDelta();
         }
 
         function updateInGameUI() {
-            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%';
-            document.getElementById('player-cp-fill').style.width = (playerCP / maxPlayerCP) * 100 + '%';
+            document.getElementById('player-hp-fill').style.width = (playerHP / maxPlayerHP) * 100 + '%'; document.getElementById('player-cp-fill').style.width = (playerCP / maxPlayerCP) * 100 + '%';
             document.getElementById('shield-status').textContent = isShieldBroken ? "クラッシュ" : `シールド: ${shieldHP}/${maxShieldHP}`; document.getElementById('shield-status').style.color = isShieldBroken ? "#ff4444" : "#1e90ff";
             document.getElementById('lock-ui').style.display = lockedEnemyIndex !== -1 ? 'block' : 'none';
         }
@@ -758,38 +582,28 @@
         function endBattle(isWin) {
             activeBattle = false; stopBGM(); let coinGain = 0;
             if (isWin) { 
-                const Payouts = [50, 150, 250, 400, 550, 1200];
-                coinGain = Payouts[currentStage] || 100;
-                globalCoins += coinGain; playSound('clear'); document.getElementById('result-title').textContent = currentStage === 5 ? "すべての脅威を駆逐しました" : (currentStage === 0 ? "チュートリアル完了" : "ミッションクリア"); document.getElementById('result-title').style.color = "#00ff88"; 
-            } 
-            else { playSound('gameover'); document.getElementById('result-title').textContent = "システムダウン"; document.getElementById('result-title').style.color = "#ff4444"; }
+                // ⚡️ コイン報酬をマイルドに減額調整
+                const Payouts = [20, 30, 50, 80, 110, 150, 200, 260, 320, 450];
+                coinGain = Payouts[currentStage] || 50; globalCoins += coinGain; playSound('clear');
+                document.getElementById('result-title').textContent = currentStage === 9 ? "究極の脅威を完全に排除しました" : (currentStage === 0 ? "チュートリアル完了" : "ミッションクリア"); document.getElementById('result-title').style.color = "#00ff88"; 
+            } else { playSound('gameover'); document.getElementById('result-title').textContent = "システムダウン"; document.getElementById('result-title').style.color = "#ff4444"; }
             saveGame(); document.getElementById('result-coin-gain').textContent = `+${coinGain} コイン獲得`; document.getElementById('ingame-ui').style.display = 'none'; document.getElementById('tutorial-nav').style.display = 'none'; switchScreen('result-screen');
         }
         function backToMenu() { switchScreen('main-menu'); }
 
         // --- コントロールイベント ---
-        let inputX = 0; let inputZ = 0;
-        const joystick = document.getElementById('joystick-container'); const handle = document.getElementById('joystick-handle');
-        let joystickActive = false; let joystickTouchId = null; let joystickCenterX = 0; let joystickCenterY = 0;
-        
+        let inputX = 0; let inputZ = 0; const joystick = document.getElementById('joystick-container'); const handle = document.getElementById('joystick-handle'); let joystickActive = false; let joystickTouchId = null; let joystickCenterX = 0; let joystickCenterY = 0;
         function calcJoystickCenter() { const r = joystick.getBoundingClientRect(); joystickCenterX = r.left + r.width/2; joystickCenterY = r.top + r.height/2; }
         joystick.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!activeBattle || isCommandPaused) return; calcJoystickCenter(); joystickActive = true; joystickTouchId = e.changedTouches[0].identifier; }, { passive: false });
-        
         window.addEventListener('touchmove', (e) => {
             if (!joystickActive) return; let t = null; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) { t = e.touches[i]; break; } } if (!t) return;
             let dx = t.clientX - joystickCenterX; let dy = t.clientY - joystickCenterY; const dist = Math.sqrt(dx*dx + dy*dy); if (dist > 50) { dx = (dx/dist)*50; dy = (dy/dist)*50; }
             handle.style.transition = 'none'; handle.style.transform = `translate(${dx}px, ${dy}px)`; inputX = dx / 50; inputZ = dy / 50;
         }, { passive: false });
-        
-        const endJoystick = (e) => {
-            if (!joystickActive) return; if (e) { let stay = false; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) stay = true; } if(stay) return; }
-            joystickActive = false; joystickTouchId = null; handle.style.transition = 'transform 0.15s ease'; handle.style.transform = 'translate(0px, 0px)'; inputX = 0; inputZ = 0;
-        };
+        const endJoystick = (e) => { if (!joystickActive) return; if (e) { let stay = false; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) stay = true; } if(stay) return; } joystickActive = false; joystickTouchId = null; handle.style.transition = 'transform 0.15s ease'; handle.style.transform = 'translate(0px, 0px)'; inputX = 0; inputZ = 0; };
         window.addEventListener('touchend', endJoystick); window.addEventListener('touchcancel', endJoystick);
-        
         document.getElementById('btn-attack').addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); playerShoot(); }, { passive: false });
         document.getElementById('btn-lockon').addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); toggleClosestLockOn(); }, { passive: false });
-        
         const gBtn = document.getElementById('btn-guard');
         gBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
         gBtn.addEventListener('touchend', () => isGuarding = false);
@@ -798,65 +612,31 @@
         
         // --- メインループ ---
         function animate() {
-            requestAnimationFrame(animate);
-            const dt = clock.getDelta();
-            const deltaScale = isCommandPaused ? 0 : dt * TIME_SCALE;
-
-            // ⚡️ 修正ポイント：ダメージ表記を1か所（コンテナ内）に制限し、指定した敵機体の頭上に正確にピン留め追従させる
+            requestAnimationFrame(animate); const dt = clock.getDelta(); const deltaScale = isCommandPaused ? 0 : dt * TIME_SCALE;
             const tempV = new THREE.Vector3();
             for (let i = damageTexts.length - 1; i >= 0; i--) {
                 const d = damageTexts[i]; d.age += dt;
-                
-                // 敵がまだ生きている、あるいは3Dオブジェクトがシーンに残っている場合はその座標をリアルタイム追従
-                if (d.enemy && d.enemy.hp > 0 && d.enemy.mesh && d.enemy.mesh.parent) {
-                    d.enemy.mesh.getWorldPosition(tempV);
-                } else if (d.enemy && d.enemy.mesh) {
-                    // 敵が死んだ直後は、消滅した瞬間の最後の3D座標で固定
-                    tempV.copy(d.enemy.mesh.position);
-                }
-                
-                // じわじわ上に上昇させる演出
-                d.offsetY += dt * 0.8;
-                tempV.y += d.offsetY;
-                
-                // 3D空間から画面2D座標（HTML）への変換
-                tempV.project(camera);
-                
-                // 画面外に出ていないかチェック
+                if (d.enemy && d.enemy.hp > 0 && d.enemy.mesh && d.enemy.mesh.parent) { d.enemy.mesh.getWorldPosition(tempV); } 
+                else if (d.enemy && d.enemy.mesh) { tempV.copy(d.enemy.mesh.position); }
+                d.offsetY += dt * 0.8; tempV.y += d.offsetY; tempV.project(camera);
                 if (Math.abs(tempV.x) <= 1 && Math.abs(tempV.y) <= 1 && tempV.z <= 1) {
-                    d.element.style.display = 'block';
-                    const x = (tempV.x * .5 + .5) * window.innerWidth;
-                    const y = (tempV.y * -.5 + .5) * window.innerHeight;
-                    d.element.style.left = x + 'px'; 
-                    d.element.style.top = y + 'px';
-                } else {
-                    d.element.style.display = 'none';
-                }
-                
-                // フェードアウト
+                    d.element.style.display = 'block'; const x = (tempV.x * .5 + .5) * window.innerWidth; const y = (tempV.y * -.5 + .5) * window.innerHeight; d.element.style.left = x + 'px'; d.element.style.top = y + 'px';
+                } else { d.element.style.display = 'none'; }
                 d.element.style.opacity = Math.max(0, 1 - (d.age / d.maxAge));
-                
-                // 寿命（1.2秒）が来たら削除
                 if (d.age >= d.maxAge) { d.element.remove(); damageTexts.splice(i, 1); }
             }
 
             if (isCommandPaused) return;
-
             hoverTime += 0.05 * deltaScale; player.position.y = 0.1 * Math.sin(hoverTime);
             hoverEffects.forEach(eff => { eff.scale += 0.02 * deltaScale; eff.opacity -= 0.01 * deltaScale; if (eff.opacity <= 0) { eff.scale = 0.5; eff.opacity = 0.6; } eff.mesh.scale.set(eff.scale, eff.scale, 1); eff.mesh.material.opacity = playerHP > 0 ? eff.opacity : 0; eff.mesh.position.set(player.position.x, 0.02, player.position.z); });
             
             if (activeBattle) {
                 if (currentStage === 0 && tutorialStep > 0) {
                     const navEl = document.getElementById('tutorial-nav');
-                    if (tutorialStep === 1) {
-                        if (inputX !== 0 || inputZ !== 0) { tutorialTimer += dt; if (tutorialTimer > 1.2) { tutorialStep = 2; tutorialTimer = 0; navEl.textContent = "🎯ボタンを押して敵を【ロックオン】しよう"; } }
-                    } else if (tutorialStep === 2) {
-                        if (lockedEnemyIndex !== -1) { tutorialStep = 3; navEl.textContent = "🛡️ボタンを長押しして【ガード】を展開しよう"; }
-                    } else if (tutorialStep === 3) {
-                        if (isGuarding) { tutorialTimer += dt; if (tutorialTimer > 1.0) { tutorialStep = 4; playerCP = 50; updateInGameUI(); navEl.textContent = "⚡️ボタンから【コマンド：E-ショック】を発動しよう"; } }
-                    } else if (tutorialStep === 4) {
-                        if (playerCP < 50) { tutorialStep = 5; navEl.textContent = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！"; }
-                    }
+                    if (tutorialStep === 1) { if (inputX !== 0 || inputZ !== 0) { tutorialTimer += dt; if (tutorialTimer > 1.2) { tutorialStep = 2; tutorialTimer = 0; navEl.textContent = "🎯ボタンを押して敵を【ロックオン】しよう"; } } } 
+                    else if (tutorialStep === 2) { if (lockedEnemyIndex !== -1) { tutorialStep = 3; navEl.textContent = "🛡️ボタンを長押しして【ガード】を展開しよう"; } } 
+                    else if (tutorialStep === 3) { if (isGuarding) { tutorialTimer += dt; if (tutorialTimer > 1.0) { tutorialStep = 4; playerCP = 50; updateInGameUI(); navEl.textContent = "⚡️ボタンから【コマンド：E-ショック】を発動しよう"; } } } 
+                    else if (tutorialStep === 4) { if (playerCP < 50) { tutorialStep = 5; navEl.textContent = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！"; } }
                 }
 
                 const curSpeed = (isGuarding ? getPlayerStat('speed') * 0.4 : getPlayerStat('speed')) * deltaScale;
@@ -864,25 +644,28 @@
                 if (playerAttackCooldown > 0) { playerAttackCooldown -= deltaScale; if (playerAttackCooldown < 0) playerAttackCooldown = 0; }
                 if (shockVisualTimer > 0) { shockVisualTimer -= deltaScale; if (shockVisualTimer < 0) shockVisualTimer = 0; shockVisualMesh.material.opacity = (shockVisualTimer / 15) * 0.6; shockVisualMesh.scale.set(1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15)); } else { shockVisualMesh.material.opacity = 0; }
                 shieldMesh.material.opacity = (isGuarding && !isShieldBroken) ? 0.4 : 0; if(isGuarding) shieldMesh.rotation.y += 0.04 * deltaScale;
-                if (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex] && enemies[lockedEnemyIndex].hp > 0) { const targetMesh = enemies[lockedEnemyIndex].mesh; lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z); lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale; } else { lockMarker.material.opacity = 0; lockedEnemyIndex = -1; }
+                
+                // ロックオンターゲットとの距離動的チェック
+                if (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex] && enemies[lockedEnemyIndex].hp > 0) {
+                    const targetMesh = enemies[lockedEnemyIndex].mesh;
+                    if (player.position.distanceTo(targetMesh.position) > getPlayerStat('lockDist')) {
+                        lockedEnemyIndex = -1; // 距離が離れたら強制ロック解除
+                    } else {
+                        lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z); lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale;
+                    }
+                } else { lockMarker.material.opacity = 0; lockedEnemyIndex = -1; }
                 
                 let totalEnemyHP = 0;
                 enemies.forEach((e) => {
                     if (e.hp <= 0) return; totalEnemyHP += e.hp;
                     const dist = e.mesh.position.distanceTo(player.position); const dx = player.position.x - e.mesh.position.x; const dz = player.position.z - e.mesh.position.z; const angle = Math.atan2(dz, dx); e.mesh.rotation.y = -angle + Math.PI/2;
-                    
                     const eSpd = (e.speed || 0.015) * deltaScale;
                     
                     if (e.type === 'valkyrie') {
-                        if (dist > 3.5) {
-                            e.mesh.position.x += Math.cos(angle + 0.3) * eSpd; e.mesh.position.z += Math.sin(angle + 0.3) * eSpd;
-                        } else {
-                            e.mesh.position.x -= Math.cos(angle) * eSpd; e.mesh.position.z -= Math.sin(angle) * eSpd;
-                        }
+                        if (dist > 3.5) { e.mesh.position.x += Math.cos(angle + 0.3) * eSpd; e.mesh.position.z += Math.sin(angle + 0.3) * eSpd; } 
+                        else { e.mesh.position.x -= Math.cos(angle) * eSpd; e.mesh.position.z -= Math.sin(angle) * eSpd; }
                     } else if (e.type === 'omega') {
-                        const driftX = Math.sin(hoverTime * 0.3) * 0.02 * deltaScale;
-                        e.mesh.position.x += driftX;
-                        if (dist > 6.0) { e.mesh.position.x += Math.cos(angle) * eSpd; e.mesh.position.z += Math.sin(angle) * eSpd; }
+                        e.mesh.position.x += Math.sin(hoverTime * 0.3) * 0.02 * deltaScale; if (dist > 6.0) { e.mesh.position.x += Math.cos(angle) * eSpd; e.mesh.position.z += Math.sin(angle) * eSpd; }
                     } else {
                         if (dist > 4.5) { e.mesh.position.x += Math.cos(angle) * eSpd; e.mesh.position.z += Math.sin(angle) * eSpd; }
                     }
@@ -890,43 +673,27 @@
                     e.shootTimer -= deltaScale;
                     if (e.shootTimer <= 0) {
                         if (e.type === 'cluster') {
-                            e.shootTimer = 80 + Math.random() * 40;
-                            for(let k = -1; k <= 1; k++) {
-                                spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.25), Math.sin(angle + k * 0.25), false, null, 0.18);
-                            }
+                            e.shootTimer = 80 + Math.random()*40; for(let k = -1; k <= 1; k++) { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.25), Math.sin(angle + k * 0.25), false, null, 0.18); }
                         } else if (e.type === 'valkyrie') {
-                            e.shootTimer = 35 + Math.random() * 25;
-                            spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, null, 0.14);
+                            e.shootTimer = 35 + Math.random()*25; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, null, 0.14);
                         } else if (e.type === 'omega') {
                             e.shootTimer = 45;
-                            const randAttack = Math.random();
-                            if (randAttack < 0.5) {
-                                for(let k = -2; k <= 2; k++) {
-                                    spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.2), Math.sin(angle + k * 0.2), false, null, 0.25, null, 0xffaa00);
-                                }
-                            } else {
-                                spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, player, 0.15, null, 0xff00ff);
-                            }
+                            if (Math.random() < 0.5) {
+                                for(let k = -2; k <= 2; k++) { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.2), Math.sin(angle + k * 0.2), false, null, 0.25, null, 0xffaa00); }
+                            } else { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, player, 0.15, null, 0xff00ff); }
                         } else if (e.type !== 'dummy') {
-                            e.shootTimer = 70 + Math.random() * 40;
-                            const erraticAngle = angle + (Math.random() - 0.5) * 0.3;
-                            spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
+                            e.shootTimer = 70 + Math.random()*40; const erraticAngle = angle + (Math.random() - 0.5) * 0.3; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
                         }
                     }
                 });
                 if (totalEnemyHP <= 0 && enemies.length > 0) { endBattle(true); return; }
                 
-                let pBulletSpeed = 0.08;
-                if(equippedGears.weapon.includes('plasma')) pBulletSpeed = 0.12;
-                if(equippedGears.weapon.includes('vortex')) pBulletSpeed = 0.05;
+                let pBulletSpeed = 0.08; if(equippedGears.weapon.includes('plasma')) pBulletSpeed = 0.12; if(equippedGears.weapon.includes('vortex')) pBulletSpeed = 0.05;
 
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const b = bullets[i];
                     if (b.isPlayer && b.target && b.target.parent) { const tx = b.target.position.x - b.mesh.position.x; const tz = b.target.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz); if (d > 0.1) { b.dirX = b.dirX * 0.94 + (tx / d) * 0.06; b.dirZ = b.dirZ * 0.94 + (tz / d) * 0.06; const bl = Math.sqrt(b.dirX*b.dirX + b.dirZ*b.dirZ); b.dirX /= bl; b.dirZ /= bl; } }
-                    if (!b.isPlayer && b.target) {
-                        const tx = player.position.x - b.mesh.position.x; const tz = player.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz);
-                        if (d > 0.1) { b.dirX = b.dirX * 0.96 + (tx / d) * 0.04; b.dirZ = b.dirZ * 0.96 + (tz / d) * 0.04; }
-                    }
+                    if (!b.isPlayer && b.target) { const tx = player.position.x - b.mesh.position.x; const tz = player.position.z - b.mesh.position.z; const d = Math.sqrt(tx*tx + tz*tz); if (d > 0.1) { b.dirX = b.dirX * 0.96 + (tx / d) * 0.04; b.dirZ = b.dirZ * 0.96 + (tz / d) * 0.04; } }
                     
                     const bSpd = (b.isPlayer ? pBulletSpeed : enemyBulletSpeed) * deltaScale; b.mesh.position.x += b.dirX * bSpd; b.mesh.position.z += b.dirZ * bSpd; b.life -= deltaScale; let removed = false;
                     
@@ -935,33 +702,19 @@
                             const e = enemies[j]; if (e.hp <= 0) continue;
                             const hitDist = (e.type === 'omega') ? 1.5 : 0.8;
                             if (b.mesh.position.distanceTo(e.mesh.position) < hitDist) {
-                                let isCrit = Math.random() * 100 < getPlayerStat('critRate');
-                                let baseDmg = b.damage !== null ? b.damage : getPlayerStat('atk');
-                                let finalDmg = isCrit ? Math.floor(baseDmg * getPlayerStat('critDmg') / 100) : baseDmg;
-                                
-                                e.hp -= finalDmg;
-                                let cpGain = equippedGears.item.includes('cp') ? 8 : 5;
-                                playerCP = Math.min(maxPlayerCP, playerCP + cpGain);
-                                
-                                // ⚡️ 修正：敵のインスタンス(e)をそのまま渡して頭上追従させる
-                                createDamageText(e, finalDmg, isCrit);
-                                playSound(isCrit ? 'crit' : 'hit');
-                                
-                                if (e.type !== 'omega') {
-                                    e.mesh.position.x += b.dirX * (isCrit ? 0.6 : 0.3) * deltaScale; e.mesh.position.z += b.dirZ * (isCrit ? 0.6 : 0.3) * deltaScale;
-                                }
+                                let isCrit = Math.random() * 100 < getPlayerStat('critRate'); let baseDmg = b.damage !== null ? b.damage : getPlayerStat('atk'); let finalDmg = isCrit ? Math.floor(baseDmg * getPlayerStat('critDmg') / 100) : baseDmg;
+                                e.hp -= finalDmg; let cpGain = equippedGears.item.includes('cp') ? 8 : 5; playerCP = Math.min(maxPlayerCP, playerCP + cpGain);
+                                createDamageText(e, finalDmg, isCrit); playSound(isCrit ? 'crit' : 'hit');
+                                if (e.type !== 'omega') { e.mesh.position.x += b.dirX * (isCrit ? 0.6 : 0.3) * deltaScale; e.mesh.position.z += b.dirZ * (isCrit ? 0.6 : 0.3) * deltaScale; }
                                 if (e.hp <= 0) { scene.remove(e.mesh); if (lockedEnemyIndex === j) lockedEnemyIndex = -1; }
                                 scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); break;
                             }
                         }
                     } else {
                         if (playerHP > 0 && b.mesh.position.distanceTo(player.position) < 0.8) { if (isGuarding && !isShieldBroken) { shieldHP--; playSound('guard'); if (shieldHP <= 0) { isShieldBroken = true; isGuarding = false; } } else { playerHP--; playSound('hit'); if (playerHP <= 0) { scene.remove(player); endBattle(false); return; } } scene.remove(b.mesh); bullets.splice(i, 1); removed = true; updateInGameUI(); }
-                    }
-                    if (!removed && b.life <= 0) { scene.remove(b.mesh); bullets.splice(i, 1); }
-                }
-                camera.position.x = player.position.x; camera.position.z = player.position.z + 7;
-            }
-            renderer.render(scene, camera);
+                    } if (!removed && b.life <= 0) { scene.remove(b.mesh); bullets.splice(i, 1); }
+                } camera.position.x = player.position.x; camera.position.z = player.position.z + 7;
+            } renderer.render(scene, camera);
         }
 
         animate();
