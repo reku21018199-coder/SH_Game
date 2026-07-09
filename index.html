@@ -68,8 +68,8 @@
         #joystick-handle { width: 45px; height: 45px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
         
         /* アクションゲームパッド */
-        .action-zone { position: absolute; bottom: 25px; right: 40px; width: 180px; height: 150px; z-index: 10; }
-        .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; cursor: pointer; z-index: 12; }
+        .action-zone { position: absolute; bottom: 25px; right: 40px; width: 180px; height: 150px; z-index: 10; pointer-events: auto; }
+        .btn-action { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; cursor: pointer; z-index: 12; pointer-events: auto; }
         
         #btn-attack { width: 76px; height: 76px; bottom: 0; right: 0; background: rgba(0, 255, 255, 0.15); border: 2px solid rgba(0, 255, 255, 0.7); color: #00ffff; font-size: 26px; }
         #btn-lockon { width: 48px; height: 48px; bottom: 84px; right: 14px; background: rgba(0, 255, 170, 0.15); border: 2px solid #00ffaa; color: #00ffaa; font-size: 18px; }
@@ -251,7 +251,7 @@
         <div id="lock-ui">ロックオンアクティブ</div>
         <div id="joystick-container" class="controls"><div id="joystick-handle"></div></div>
         <div class="action-zone">
-            <div id="btn-shock" class="btn-action" onclick="openCommandMenu()">⚡️</div>
+            <div id="btn-shock" class="btn-action">⚡️</div>
             <div id="btn-guard" class="btn-action">🛡️</div>
             <div id="btn-lockon" class="btn-action">🎯</div>
             <div id="btn-attack" class="btn-action">💥</div>
@@ -420,7 +420,6 @@
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
         const gridHelper = new THREE.GridHelper(60, 60, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
 
-        // ⚡️ 修正ポイント：途切れていたcreateRobot関数を完全復活
         function createRobot(mainColor, eyeColor, isPlayerMech = false, sizeScale = 1) {
             const g = new THREE.Group(); 
             const m = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.15, metalness: 0.5 }); 
@@ -475,6 +474,26 @@
             if (closestIndex !== -1) { lockedEnemyIndex = closestIndex; playSound('guard'); }
             updateInGameUI();
         }
+
+        let audioCtx = null; let bgmNode = null;
+        function initAudio() { if (audioCtx || isMuted) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); startBGM(); }
+        function toggleMute() { isMuted = !isMuted; document.getElementById('btn-mute').textContent = isMuted ? "オーディオ: オフ" : "オーディオ: オン"; if (isMuted) { stopBGM(); audioCtx = null; } else { initAudio(); } }
+        function playSound(type) {
+            if (!audioCtx || isMuted) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
+            if (type === 'shoot') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.12); osc.start(now); osc.stop(now + 0.12); } 
+            else if (type === 'shock') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, now); osc.frequency.linearRampToValueAtTime(650, now + 0.28); gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.28); osc.start(now); osc.stop(now + 0.28); } 
+            else if (type === 'hit') { osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now); osc.frequency.linearRampToValueAtTime(40, now + 0.08); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.08); osc.start(now); osc.stop(now + 0.08); } 
+            else if (type === 'crit') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(90, now); osc.frequency.linearRampToValueAtTime(900, now + 0.16); gain.gain.setValueAtTime(0.25, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.16); osc.start(now); osc.stop(now + 0.16); }
+            else if (type === 'guard') { osc.type = 'sine'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(440, now + 0.07); gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.07); osc.start(now); osc.stop(now + 0.07); } 
+            else if (type === 'clear') { osc.type = 'sine'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08); osc.frequency.setValueAtTime(784, now + 0.16); gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); } 
+            else if (type === 'gameover') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(40, now + 0.4); gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); }
+        }
+        function startBGM() {
+            if (!audioCtx) return; const bufferSize = audioCtx.sampleRate * 2; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); const notes = [110, 110, 130, 110, 146, 110, 165, 130]; const stepLen = audioCtx.sampleRate * 0.25;
+            for (let i = 0; i < bufferSize; i++) { const step = Math.floor(i / stepLen) % notes.length; const freq = notes[step]; const t = i / audioCtx.sampleRate; data[i] = (Math.sin(2 * Math.PI * freq * t) + ((i % Math.floor(audioCtx.sampleRate / freq)) / (audioCtx.sampleRate / freq) - 0.5) * 0.2) * Math.max(0, 1 - ((i % stepLen) / stepLen) * 2.5) * 0.04; }
+            bgmNode = audioCtx.createBufferSource(); bgmNode.buffer = buffer; bgmNode.loop = true; bgmNode.connect(audioCtx.destination); bgmNode.start();
+        }
+        function stopBGM() { if (bgmNode) { try { bgmNode.stop(); } catch(e){} bgmNode = null; } }
 
         function createDamageText(enemyRef, amount, isCrit) {
             const container = document.getElementById('damage-container'); const el = document.createElement('div'); el.className = 'damage-indicator';
@@ -655,6 +674,7 @@
         // --- コントロールイベント ---
         let inputX = 0; let inputZ = 0; const joystick = document.getElementById('joystick-container'); const handle = document.getElementById('joystick-handle'); let joystickActive = false; let joystickTouchId = null; let joystickCenterX = 0; let joystickCenterY = 0;
         function calcJoystickCenter() { const r = joystick.getBoundingClientRect(); joystickCenterX = r.left + r.width/2; joystickCenterY = r.top + r.height/2; }
+        
         joystick.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!activeBattle || isCommandPaused) return; calcJoystickCenter(); joystickActive = true; joystickTouchId = e.changedTouches[0].identifier; }, { passive: false });
         window.addEventListener('touchmove', (e) => {
             if (!joystickActive) return; let t = null; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) { t = e.touches[i]; break; } } if (!t) return;
@@ -663,11 +683,34 @@
         }, { passive: false });
         const endJoystick = (e) => { if (!joystickActive) return; if (e) { let stay = false; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) stay = true; } if(stay) return; } joystickActive = false; joystickTouchId = null; handle.style.transition = 'transform 0.15s ease'; handle.style.transform = 'translate(0px, 0px)'; inputX = 0; inputZ = 0; };
         window.addEventListener('touchend', endJoystick); window.addEventListener('touchcancel', endJoystick);
-        document.getElementById('btn-attack').addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); playerShoot(); }, { passive: false });
-        document.getElementById('btn-lockon').addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); toggleClosestLockOn(); }, { passive: false });
-        const gBtn = document.getElementById('btn-guard');
-        gBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
-        gBtn.addEventListener('touchend', () => isGuarding = false);
+
+        // ⚡️ 修正ポイント：ボタンのイベント登録をDOM取得直後（あるいはロード時）に確実に行い、競合を防ぐ強固な記述に変更
+        document.addEventListener("DOMContentLoaded", () => {
+            const attackBtn = document.getElementById('btn-attack');
+            const lockonBtn = document.getElementById('btn-lockon');
+            const guardBtn = document.getElementById('btn-guard');
+            const shockBtn = document.getElementById('btn-shock');
+
+            if(attackBtn) {
+                attackBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); playerShoot(); }, { passive: false });
+                attackBtn.addEventListener('mousedown', (e) => { initAudio(); playerShoot(); });
+            }
+            if(lockonBtn) {
+                lockonBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); toggleClosestLockOn(); }, { passive: false });
+                lockonBtn.addEventListener('mousedown', (e) => { e.stopPropagation(); initAudio(); toggleClosestLockOn(); });
+            }
+            if(guardBtn) {
+                guardBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) { if(!isGuarding) playSound('guard'); isGuarding = true; } }, { passive: false });
+                guardBtn.addEventListener('touchend', (e) => { e.preventDefault(); isGuarding = false; }, { passive: false });
+                guardBtn.addEventListener('mousedown', (e) => { initAudio(); if(!isShieldBroken && activeBattle && !isCommandPaused) isGuarding = true; });
+                guardBtn.addEventListener('mouseup', () => { isGuarding = false; });
+                guardBtn.addEventListener('mouseleave', () => { isGuarding = false; });
+            }
+            if(shockBtn) {
+                shockBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); initAudio(); openCommandMenu(); }, { passive: false });
+                shockBtn.addEventListener('mousedown', (e) => { initAudio(); openCommandMenu(); });
+            }
+        });
 
         const enemyBulletSpeed = 0.07; let hoverTime = 0;
         
@@ -739,7 +782,7 @@
                                 for(let k = -2; k <= 2; k++) { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.2), Math.sin(angle + k * 0.2), false, null, 0.25, null, 0xffaa00); }
                             } else { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, player, 0.15, null, 0xff00ff); }
                         } else if (e.type !== 'dummy') {
-                            e.shootTimer = 70 + Math.random()*40; const erraticAngle = angle + (Math.random() - 0.5) * 0.3; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
+                            e.shootTimer = 70 + Math.random()*40; const erraticAngle = angle + (Math.random() - 0.5) * 0.3; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(errAccessAngle), false);
                         }
                     }
                 });
