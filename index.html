@@ -34,15 +34,14 @@
         .shop-section-title { font-size: 14px; color: #00ffff; font-weight: bold; text-align: left; margin-bottom: 4px; border-left: 4px solid #00ffff; padding-left: 6px; }
         .shop-item { background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
         
-        /* カラー枠の指定 */
-        .border-item { border-color: #00ff88 !important; background: rgba(0,255,136,0.03); }      /* アイテム：緑 */
-        .border-command { border-color: #ffd700 !important; background: rgba(255,215,0,0.03); }   /* コマンド：黄 */
-        .border-gear { border-color: #ff3366 !important; background: rgba(255,51,102,0.03); }     /* ギア：赤 */
+        /* カラー枠 */
+        .border-item { border-color: #00ff88 !important; background: rgba(0,255,136,0.03); }
+        .border-command { border-color: #ffd700 !important; background: rgba(255,215,0,0.03); }
+        .border-gear { border-color: #ff3366 !important; background: rgba(255,51,102,0.03); }
 
         .shop-info { text-align: left; max-width: 240px; }
         .shop-name { font-size: 12px; font-weight: bold; color: #fff; }
         .shop-desc { font-size: 10px; color: #aaaaaa; margin-top: 2px; line-height: 1.2; }
-        .shop-lv { font-size: 11px; color: #00ffaa; font-weight: bold; }
         .shop-btn { background: #ffd700; color: #111; border: none; padding: 5px 10px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; width: 85px; text-align: center; }
         .shop-btn:disabled { background: #444; color: #888; }
 
@@ -57,6 +56,12 @@
         .equip-slot { width: 55px; height: 55px; background: rgba(255,255,255,0.05); border: 1px dashed #666; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #888; cursor: pointer; position: relative; }
         .equip-slot.active { border: 1px solid #00ffaa; background: rgba(0,255,170,0.1); color: #fff; font-weight: bold; }
         .equip-slot.locked { border-color: #ff4444; background: rgba(255,68,68,0.05); color: #ff4444; cursor: default; }
+
+        /* 選択ポップアップ */
+        #selector-popup { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5,5,15,0.9); z-index: 300; flex-direction: column; align-items: center; justify-content: center; }
+        .selector-window { background: #0c0c24; border: 2px solid #00ffff; width: 340px; padding: 15px; border-radius: 10px; text-align: center; }
+        .selector-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; }
+        .selector-item:active { background: rgba(0,255,255,0.15); }
 
         /* 移動ジョイスティック */
         .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
@@ -97,7 +102,6 @@
     <canvas id="game-canvas"></canvas>
     <div id="damage-container" style="position:absolute; top:0; left:0; pointer-events:none; width:100vw; height:100vh; overflow:hidden;"></div>
 
-    <!-- 🔑 ログイン画面 -->
     <div id="login-screen" class="menu-screen">
         <div class="menu-title">CYBER BATTLE</div>
         <div style="font-size: 13px; color: #8a8aaf; margin-bottom: 15px;">パイロット名を入力してください</div>
@@ -105,7 +109,6 @@
         <div class="menu-btn" onclick="loginAndStart()">ゲーム開始</div>
     </div>
 
-    <!-- メインメニュー -->
     <div id="main-menu" class="menu-screen" style="display:none;">
         <div class="menu-title">CYBER BATTLE</div>
         <div id="current-user-tag" class="user-tag">パイロット: ------</div>
@@ -119,7 +122,6 @@
         <div class="menu-btn back-btn" onclick="logout()" style="font-size:11px; width:90px; margin-top:15px; padding: 5px;">ログアウト</div>
     </div>
 
-    <!-- ミッション選択（ステージ9まで拡張） -->
     <div id="stage-select" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">ミッション選択</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; width: 480px; margin-bottom: 10px;">
@@ -137,7 +139,6 @@
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
-    <!-- 🛡️ 装備設定画面 -->
     <div id="equipment-screen" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">装備編成</div>
         <div id="equip-coin" class="coin-display">コイン: 0</div>
@@ -172,13 +173,11 @@
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')" style="margin-top:10px;">戻る</div>
     </div>
 
-    <!-- 🛒 SHOP（2列・カラー枠レイアウト・Lv30対応） -->
     <div id="status-shop" class="menu-screen" style="display:none;">
         <div class="menu-subtitle">サイバーショップ</div>
         <div id="shop-coin" class="coin-display">コイン: 0</div>
         
         <div class="shop-grid">
-            <!-- 左列：ステータス強化 (上限レベル30) -->
             <div class="shop-column">
                 <div class="shop-section-title">ステータスアップグレード (最大Lv.30)</div>
                 <div class="shop-item"><div class="shop-info"><div class="shop-name">最大HP</div><div id="lv-hp" class="shop-desc">レベル.1</div></div><button id="btn-buy-hp" class="shop-btn" onclick="buyUpgrade('hp')">20 C</button></div>
@@ -189,23 +188,18 @@
                 <div class="shop-item"><div class="shop-info"><div class="shop-name">ファイアレート</div><div id="lv-rate" class="shop-desc">レベル.1</div></div><button id="btn-buy-rate" class="shop-btn" onclick="buyUpgrade('rate')">40 C</button></div>
                 <div class="shop-item"><div class="shop-info"><div class="shop-name">移動スピード</div><div id="lv-speed" class="shop-desc">レベル.1</div></div><button id="btn-buy-speed" class="shop-btn" onclick="buyUpgrade('speed')">30 C</button></div>
                 <div class="shop-item"><div class="shop-info"><div class="shop-name">マルチショット</div><div id="lv-shot" class="shop-desc">1 バレット</div></div><button id="btn-buy-shot" class="shop-btn" onclick="buyUpgrade('shot')">150 C</button></div>
-                <!-- 新ステータス -->
                 <div class="shop-item"><div class="shop-info"><div class="shop-name">ロックオン可能距離</div><div id="lv-lockDist" class="shop-desc">レベル.1</div></div><button id="btn-buy-lockDist" class="shop-btn" onclick="buyUpgrade('lockDist')">20 C</button></div>
             </div>
             
-            <!-- 右列：アイテム・コマンド・ギア (各枠カラー色分け) -->
             <div class="shop-column">
                 <div class="shop-section-title">ガジェット＆アタッチメント</div>
                 
-                <!-- アイテム枠 (緑色枠) -->
                 <div class="shop-item border-item"><div class="shop-info"><div class="shop-name">🧪 ナノリペアラー (アイテム)</div><div class="shop-desc">ナノマシンを機体に注入し、戦闘中の「最大HP」を＋2底上げする補強コア。</div></div><button id="btn-buy-item-rep" class="shop-btn" onclick="buyUpgrade('gear_item_rep')">80 C</button></div>
                 <div class="shop-item border-item"><div class="shop-info"><div class="shop-name">🔋 CPオーバーチャージャー (アイテム)</div><div class="shop-desc">弾丸命中時のエネルギー吸着効率を向上し、コマンドポイントの回収率を上げる。</div></div><button id="btn-buy-item-cp" class="shop-btn" onclick="buyUpgrade('gear_item_cp')">90 C</button></div>
                 
-                <!-- コマンド枠 (黄色枠) -->
                 <div class="shop-item border-command"><div class="shop-info"><div class="shop-name">🌐 クロスレーザー (コマンド)</div><div class="shop-desc">[消費50CP] 自機を中心に十字4方向へ地形をも貫くエネルギーレーザーを一斉放射。</div></div><button id="btn-buy-laser" class="shop-btn" onclick="buyUpgrade('cmd_laser')">120 C</button></div>
                 <div class="shop-item border-command"><div class="shop-info"><div class="shop-name">🔥 ギガブラスト (コマンド)</div><div class="shop-desc">[消費90CP] 前方へ超ド級の濃縮プラズマ弾を放ち、着弾地点を巻き込む大爆発を起こす。</div></div><button id="btn-buy-blast" class="shop-btn" onclick="buyUpgrade('cmd_blast')">160 C</button></div>
                 
-                <!-- ギア（武器）枠 (赤枠) -->
                 <div class="shop-item border-gear"><div class="shop-info"><div class="shop-name">🔫 プラズマライフル (ギア)</div><div class="shop-desc">高圧プラズマを高速連射する主兵装。クリティカル発生確率が「15%」上乗せされる。</div></div><button id="btn-buy-wpn-plasma" class="shop-btn" onclick="buyUpgrade('gear_wpn_plasma')">110 C</button></div>
                 <div class="shop-item border-gear"><div class="shop-info"><div class="shop-name">🔮 ヴォルテックスキャノン (ギア)</div><div class="shop-desc">連射性能を犠牲に、威力を極限まで高めた重粒子重砲。常時「攻撃力」が＋2増加。</div></div><button id="btn-buy-wpn-vortex" class="shop-btn" onclick="buyUpgrade('gear_wpn_vortex')">180 C</button></div>
             </div>
@@ -213,7 +207,36 @@
         <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
     </div>
 
-    <!-- ゲーム内UI -->
+    <div id="selector-popup">
+        <div class="selector-window">
+            <div id="selector-title" style="font-size:15px; font-weight:bold; color:#00ffff; margin-bottom:12px;">ギア選択</div>
+            <div id="selector-list"></div>
+            <button class="menu-btn back-btn" style="width:100%; margin-top:10px; border-radius:5px; font-size:13px;" onclick="closeSelector()">キャンセル</button>
+        </div>
+    </div>
+
+    <div id="option-menu" class="menu-screen" style="display:none;">
+        <div class="menu-subtitle">設定</div>
+        <div id="btn-mute" class="menu-btn" onclick="toggleMute()">オーディオ: オン</div>
+        <div class="menu-btn back-btn" onclick="resetProgress()" style="margin-top:20px; font-size:13px; opacity:0.7;">データリセット</div>
+        <div class="menu-btn back-btn" onclick="switchScreen('main-menu')">戻る</div>
+    </div>
+
+    <div id="result-screen" class="menu-screen" style="display:none;">
+        <div id="result-title"></div>
+        <div id="result-coin-gain" style="color:#ffd700; font-weight:bold; margin-bottom:15px;">+0 コイン獲得</div>
+        <div class="menu-btn" onclick="backToMenu()">メニューへ戻る</div>
+    </div>
+
+    <div id="command-menu">
+        <div class="command-window">
+            <div style="font-size:18px; font-weight:bold; color:#ffd700; margin-bottom:4px;">コマンド選択</div>
+            <div id="command-current-cp" style="font-size:12px; color:#aaa; margin-bottom:15px;">CP: 0 / 100</div>
+            <div id="command-list-container"></div>
+            <button class="menu-btn back-btn" style="width:100%; margin-top:12px; border-radius:6px; font-size:14px;" onclick="closeCommandMenu()">キャンセル</button>
+        </div>
+    </div>
+
     <div id="ingame-ui" style="display:none;">
         <div id="tutorial-nav" style="position: absolute; top: 70px; left: 50%; transform: translateX(-50%); color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(10,10,30,0.85); padding: 8px 20px; border-radius: 8px; border: 1px solid #00ffff; text-align: center; display: none; z-index: 10; pointer-events: none; white-space: nowrap; box-shadow: 0 0 10px rgba(0,255,255,0.3);">指示</div>
         <div class="ui-container">
@@ -241,7 +264,6 @@
         let globalCoins = 0; let isMuted = false; let currentStage = 1;
         let tutorialStep = 0; let tutorialTimer = 0;
 
-        // ⚡️ 各ステータス上限値を30に引き上げ、価格スケーリングをマイルドに変更
         let upgrades = {
             hp:        { lv: 1, max: 30, basePrice: 20,  scale: 1.12 },
             shield:    { lv: 1, max: 30, basePrice: 25,  scale: 1.12 },
@@ -251,7 +273,7 @@
             rate:      { lv: 1, max: 30, basePrice: 40,  scale: 1.12 },
             speed:     { lv: 1, max: 30, basePrice: 30,  scale: 1.10 },
             shot:      { lv: 1, max: 3,  basePrice: 150, scale: 2.2 },
-            lockDist:  { lv: 1, max: 30, basePrice: 20,  scale: 1.10 }, // 新ステータス
+            lockDist:  { lv: 1, max: 30, basePrice: 20,  scale: 1.10 },
             gear_item_rep:   { lv: 0, max: 1, basePrice: 80,  scale: 1.0 },
             gear_item_cp:    { lv: 0, max: 1, basePrice: 90,  scale: 1.0 },
             cmd_laser:       { lv: 0, max: 1, basePrice: 120, scale: 1.0 },
@@ -262,6 +284,23 @@
 
         let slotLimits = { item: 2, command: 2, weapon: 2 };
         let equippedGears = { item: [], command: ['shock'], weapon: ['std'] };
+
+        const ALL_GEARS = {
+            item: [
+                { id: 'rep', name: '🧪 ナノリペアラー', desc: 'HPを少し強化する' },
+                { id: 'cp', name: '🔋 CPオーバーチャージャー', desc: 'CP回復率アップ' }
+            ],
+            command: [
+                { id: 'shock', name: '⚡️ E-ショック', cp: 30, desc: '周囲に電撃波を発する' },
+                { id: 'laser', name: '🌐 クロスレーザー', cp: 50, desc: '4方向貫通レーザーを発射' },
+                { id: 'blast', name: '🔥 ギガブラスト', cp: 90, desc: '前方へ巨大爆破弾を発射' }
+            ],
+            weapon: [
+                { id: 'std', name: '🤖 スタンダード V1', desc: '標準エネルギーバルカン' },
+                { id: 'plasma', name: '🔫 プラズマライフル', desc: '高速・高クリティカル弾' },
+                { id: 'vortex', name: '🔮 ヴォルテックスキャノン', desc: '巨大な高負荷砲' }
+            ]
+        };
 
         function loginAndStart() {
             let inputName = document.getElementById('username-input').value.trim();
@@ -329,7 +368,7 @@
             if (type === 'rate') return Math.max(6, 26 - Math.floor(up.lv * 0.6));
             if (type === 'speed') return 0.04 + up.lv * 0.003;
             if (type === 'shot') return up.lv;
-            if (type === 'lockDist') return 3.2 + up.lv * 0.25; // 初期値3.2、MAXで10.4
+            if (type === 'lockDist') return 3.2 + up.lv * 0.25;
             return 1;
         }
 
@@ -381,6 +420,31 @@
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x161624, roughness: 0.6 })); floor.rotation.x = -Math.PI / 2; scene.add(floor);
         const gridHelper = new THREE.GridHelper(60, 60, 0x00ff88, 0x333355); gridHelper.position.y = 0.01; scene.add(gridHelper);
 
+        // ⚡️ 修正ポイント：途切れていたcreateRobot関数を完全復活
+        function createRobot(mainColor, eyeColor, isPlayerMech = false, sizeScale = 1) {
+            const g = new THREE.Group(); 
+            const m = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.15, metalness: 0.5 }); 
+            const em = new THREE.MeshStandardMaterial({ color: eyeColor, roughness: 0.1 }); 
+            const jm = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6 });
+            
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.7, 0.6), m); body.position.y = 0.65; g.add(body);
+            const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.4), m); head.position.y = 1.1; g.add(head);
+            const eye = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.1), em); eye.position.set(0, 1.15, -0.21); g.add(eye);
+            const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), m); leftArm.position.set(0.55, 0.65, 0); g.add(leftArm);
+            
+            if (isPlayerMech) {
+                const rightArmGroup = new THREE.Group(); rightArmGroup.position.set(-0.55, 0.65, 0);
+                const gunBody = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0x555566, metalness: 0.8 })); gunBody.rotation.x = Math.PI / 2; gunBody.position.set(0, 0, -0.3); rightArmGroup.add(gunBody);
+                const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.05, 16), new THREE.MeshBasicMaterial({ color: 0x00ffff })); muzzle.rotation.x = Math.PI / 2; muzzle.position.set(0, 0, -0.62); rightArmGroup.add(muzzle); g.add(rightArmGroup);
+            } else { 
+                const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), m); rightArm.position.set(-0.55, 0.65, 0); g.add(rightArm); 
+            }
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.3, 16), jm); leg.rotation.z = Math.PI / 2; leg.position.y = 0.15; g.add(leg);
+            
+            if (sizeScale !== 1) { g.scale.set(sizeScale, sizeScale, sizeScale); }
+            return g;
+        }
+
         const player = createRobot(0x00ff88, 0x00ffff, true); scene.add(player);
         const hoverEffects = [];
         for(let i=0; i<3; i++) {
@@ -398,11 +462,10 @@
         const enemies = []; const bullets = []; const damageTexts = [];
         let playerAttackCooldown = 0; let shockVisualTimer = 0; let playerRotation = 0;
 
-        // ⚡️ ロックオン機能に「新ステータス：ロックオン距離」を適用
         function toggleClosestLockOn() {
             if (!activeBattle || isCommandPaused) return; initAudio();
             if (lockedEnemyIndex !== -1) { lockedEnemyIndex = -1; updateInGameUI(); return; }
-            let minDistance = getPlayerStat('lockDist'); // 動的制限
+            let minDistance = getPlayerStat('lockDist');
             let closestIndex = -1;
             for (let i = 0; i < enemies.length; i++) {
                 if (enemies[i].hp <= 0) continue;
@@ -416,7 +479,7 @@
         function createDamageText(enemyRef, amount, isCrit) {
             const container = document.getElementById('damage-container'); const el = document.createElement('div'); el.className = 'damage-indicator';
             el.style.color = isCrit ? '#ff3333' : '#00ffff'; el.style.fontSize = isCrit ? '26px' : '18px'; el.textContent = amount + (isCrit ? '!!' : ''); container.appendChild(el);
-            damageTexts.push({ element: el, enemy: enemyRef, offsetY: 1.4, age: 0, maxAge: 1.2 }); // 1.2秒に延長
+            damageTexts.push({ element: el, enemy: enemyRef, offsetY: 1.4, age: 0, maxAge: 1.2 });
         }
 
         function spawnBullet(startX, startZ, dirX, dirZ, isPlayer, targetEnemyMesh = null, size = 0.15, damageOverride = null, colorOverride = null) {
@@ -484,7 +547,6 @@
             }
         }
 
-        // ⚡️ 修正：全9ステージ構成、敵の大幅増量と、獲得コインの大幅減額（難易度アップ）
         function startBattle(stageNum) {
             currentStage = stageNum; activeBattle = true; isCommandPaused = false;
             maxPlayerHP = getPlayerStat('hp'); playerHP = maxPlayerHP; playerCP = 0;
@@ -500,19 +562,19 @@
             } else {
                 tutorialStep = 0; navEl.style.display = 'none';
                 
-                if (stageNum === 1) { // 通常機 3体
+                if (stageNum === 1) {
                     for(let i=0; i<3; i++) {
                         const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 1) * 3, 0, -7); scene.add(m);
                         enemies.push({ mesh: m, hp: 6, shootTimer: 45 + i*10, type: 'std', speed: 0.015 });
                     }
                 } 
-                else if (stageNum === 2) { // 通常機 5体小隊
+                else if (stageNum === 2) {
                     for(let i=0; i<5; i++) {
                         const m = createRobot(0xff4444, 0xffaa00, false); m.position.set((i - 2) * 2.8, 0, -8 - (i%2)*2); scene.add(m);
                         enemies.push({ mesh: m, hp: 8, shootTimer: 35 + Math.random()*30, type: 'std', speed: 0.016 });
                     }
                 } 
-                else if (stageNum === 3) { // 中ボス1体 + 通常4体
+                else if (stageNum === 3) {
                     const boss = createRobot(0x8b008b, 0x00ffff, false, 1.4); boss.position.set(0, 0, -11); scene.add(boss);
                     enemies.push({ mesh: boss, hp: 22, shootTimer: 55, type: 'cluster', speed: 0.009 });
                     for(let i=0; i<4; i++) {
@@ -520,13 +582,13 @@
                         enemies.push({ mesh: m, hp: 7, shootTimer: 40, type: 'std', speed: 0.018 });
                     }
                 } 
-                else if (stageNum === 4) { // 高速強襲機 4体
+                else if (stageNum === 4) {
                     for(let i=0; i<4; i++) {
                         const m = createRobot(0xffaa00, 0xff0055, false, 1.1); m.position.set((i - 1.5) * 4, 0, -10); scene.add(m);
                         enemies.push({ mesh: m, hp: 15, shootTimer: 30, type: 'valkyrie', speed: 0.033 });
                     }
                 } 
-                else if (stageNum === 5) { // 前期最終ボス1体 + 随伴4体
+                else if (stageNum === 5) {
                     const bossMesh = createRobot(0x222222, 0xff0000, false, 2.0); bossMesh.position.set(0, 0, -14); scene.add(bossMesh);
                     enemies.push({ mesh: bossMesh, hp: 45, shootTimer: 40, type: 'omega', speed: 0.008 });
                     for(let i=0; i<2; i++) {
@@ -538,13 +600,13 @@
                         enemies.push({ mesh: m, hp: 14, shootTimer: 50, type: 'cluster', speed: 0.01 });
                     }
                 }
-                else if (stageNum === 6) { // 新鋭電子妨害部隊 (移動遅延弾を模した高頻度弾) 6体
+                else if (stageNum === 6) {
                     for(let i=0; i<6; i++) {
                         const m = createRobot(0x4b0082, 0x00ffaa, false, 1.1); m.position.set((i - 2.5) * 2.5, 0, -9 - (i%2)*2); scene.add(m);
                         enemies.push({ mesh: m, hp: 16, shootTimer: 20 + Math.random()*20, type: 'std', speed: 0.022 });
                     }
                 }
-                else if (stageNum === 7) { // 複合中ボス師団 (クラスター3体 + ヴァルキリー3体)
+                else if (stageNum === 7) {
                     for(let i=0; i<3; i++) {
                         const c = createRobot(0x8b008b, 0x00ffff, false, 1.4); c.position.set((i - 1) * 5, 0, -12); scene.add(c);
                         enemies.push({ mesh: c, hp: 25, shootTimer: 45, type: 'cluster', speed: 0.01 });
@@ -554,13 +616,13 @@
                         enemies.push({ mesh: v, hp: 18, shootTimer: 25, type: 'valkyrie', speed: 0.036 });
                     }
                 }
-                else if (stageNum === 8) { // オメガフォートレス 2体同時襲来
+                else if (stageNum === 8) {
                     for(let i=0; i<2; i++) {
                         const boss = createRobot(0x331111, 0xff0033, false, 1.9); boss.position.set(i===0?-4:4, 0, -14); scene.add(boss);
                         enemies.push({ mesh: boss, hp: 40, shootTimer: 40 + i*15, type: 'omega', speed: 0.01 });
                     }
                 }
-                else if (stageNum === 9) { // 最終超絶対決：真オメガ・デストロイヤー 2体 ＋ 精鋭護衛群 4体
+                else if (stageNum === 9) {
                     for(let i=0; i<2; i++) {
                         const superBoss = createRobot(0x000000, 0xff0000, false, 2.3); superBoss.position.set(i===0?-5:5, 0, -15); scene.add(superBoss);
                         enemies.push({ mesh: superBoss, hp: 60, shootTimer: 35 + i*10, type: 'omega', speed: 0.012 });
@@ -582,7 +644,6 @@
         function endBattle(isWin) {
             activeBattle = false; stopBGM(); let coinGain = 0;
             if (isWin) { 
-                // ⚡️ コイン報酬をマイルドに減額調整
                 const Payouts = [20, 30, 50, 80, 110, 150, 200, 260, 320, 450];
                 coinGain = Payouts[currentStage] || 50; globalCoins += coinGain; playSound('clear');
                 document.getElementById('result-title').textContent = currentStage === 9 ? "究極の脅威を完全に排除しました" : (currentStage === 0 ? "チュートリアル完了" : "ミッションクリア"); document.getElementById('result-title').style.color = "#00ff88"; 
@@ -645,14 +706,10 @@
                 if (shockVisualTimer > 0) { shockVisualTimer -= deltaScale; if (shockVisualTimer < 0) shockVisualTimer = 0; shockVisualMesh.material.opacity = (shockVisualTimer / 15) * 0.6; shockVisualMesh.scale.set(1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15), 1 - (shockVisualTimer/15)); } else { shockVisualMesh.material.opacity = 0; }
                 shieldMesh.material.opacity = (isGuarding && !isShieldBroken) ? 0.4 : 0; if(isGuarding) shieldMesh.rotation.y += 0.04 * deltaScale;
                 
-                // ロックオンターゲットとの距離動的チェック
                 if (lockedEnemyIndex !== -1 && enemies[lockedEnemyIndex] && enemies[lockedEnemyIndex].hp > 0) {
                     const targetMesh = enemies[lockedEnemyIndex].mesh;
-                    if (player.position.distanceTo(targetMesh.position) > getPlayerStat('lockDist')) {
-                        lockedEnemyIndex = -1; // 距離が離れたら強制ロック解除
-                    } else {
-                        lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z); lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale;
-                    }
+                    if (player.position.distanceTo(targetMesh.position) > getPlayerStat('lockDist')) { lockedEnemyIndex = -1; } 
+                    else { lockMarker.position.set(targetMesh.position.x, 0.05, targetMesh.position.z); lockMarker.material.opacity = 0.7; lockMarker.rotation.z += 0.02 * deltaScale; }
                 } else { lockMarker.material.opacity = 0; lockedEnemyIndex = -1; }
                 
                 let totalEnemyHP = 0;
