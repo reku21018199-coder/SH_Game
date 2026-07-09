@@ -747,10 +747,43 @@
             if (activeBattle) {
                 if (currentStage === 0 && tutorialStep > 0) {
                     const navEl = document.getElementById('tutorial-nav');
-                    if (tutorialStep === 1) { if (inputX !== 0 || inputZ !== 0) { tutorialTimer += dt; if (tutorialTimer > 1.2) { tutorialStep = 2; tutorialTimer = 0; navEl.textContent = "🎯ボタンを押して敵を【ロックオン】しよう"; } } } 
-                    else if (tutorialStep === 2) { if (lockedEnemyIndex !== -1) { tutorialStep = 3; navEl.textContent = "🛡️ボタンを長押しして【ガード】を展開しよう"; } } 
-                    else if (tutorialStep === 3) { if (isGuarding) { tutorialTimer += dt; if (tutorialTimer > 1.0) { tutorialStep = 4; playerCP = 50; updateInGameUI(); navEl.textContent = "⚡️ボタンから【コマンド：E-ショック】を発動しよう"; } } } 
-                    else if (tutorialStep === 4) { if (playerCP < 50) { tutorialStep = 5; navEl.textContent = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！"; } }
+                    // メッセージが長くなるため、折り返しを許可して見やすくする
+                    navEl.style.whiteSpace = 'normal';
+                    navEl.style.lineHeight = '1.4';
+
+                    if (tutorialStep === 1) { 
+                        if (inputX !== 0 || inputZ !== 0) { 
+                            tutorialTimer += dt; 
+                            if (tutorialTimer > 1.2) { 
+                                tutorialStep = 2; 
+                                tutorialTimer = 0; 
+                                navEl.innerHTML = "🎯ボタンを押して敵を【ロックオン】しよう<br><span style='font-size:11px; color:#ffd700; font-weight:normal;'>※レベルを上げるとロックオン可能距離が広がります</span>"; 
+                            } 
+                        } 
+                    } 
+                    else if (tutorialStep === 2) { 
+                        if (lockedEnemyIndex !== -1) { 
+                            tutorialStep = 3; 
+                            navEl.innerHTML = "🛡️ボタンを長押しして【ガード】を展開しよう<br><span style='font-size:11px; color:#ffd700; font-weight:normal;'>※シールド耐久値もショップで強化可能です</span>"; 
+                        } 
+                    } 
+                    else if (tutorialStep === 3) { 
+                        if (isGuarding) { 
+                            tutorialTimer += dt; 
+                            if (tutorialTimer > 1.0) { 
+                                tutorialStep = 4; 
+                                playerCP = 50; 
+                                updateInGameUI(); 
+                                navEl.innerHTML = "⚡️ボタンから【コマンド：E-ショック】を発動しよう<br><span style='font-size:11px; color:#ffd700; font-weight:normal;'>※ショップで強力な新技（コマンド）も解放できます</span>"; 
+                            } 
+                        } 
+                    } 
+                    else if (tutorialStep === 4) { 
+                        if (playerCP < 50) { 
+                            tutorialStep = 5; 
+                            navEl.innerHTML = "💥ボタンを連打して敵を【攻撃】し、破壊しよう！<br><span style='font-size:11px; color:#ffd700; font-weight:normal;'>※攻撃力・連射速度・マルチショット等も強化できます</span>"; 
+                        } 
+                    }
                 }
 
                 const curSpeed = (isGuarding ? getPlayerStat('speed') * 0.4 : getPlayerStat('speed')) * deltaScale;
@@ -794,7 +827,6 @@
                         } else if (e.type !== 'dummy') {
                             e.shootTimer = 70 + Math.random()*40; 
                             const erraticAngle = angle + (Math.random() - 0.5) * 0.3; 
-                            /* ⚡️ 修正: errAccessAngle から erraticAngle に修正 */
                             spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
                         }
                     }
