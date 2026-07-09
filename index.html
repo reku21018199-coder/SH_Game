@@ -63,6 +63,14 @@
         .selector-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; }
         .selector-item:active { background: rgba(0,255,255,0.15); }
 
+        /* 💥 コマンドメニュー用のCSS追加 */
+        #command-menu { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5,5,15,0.85); z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
+        .command-window { background: #0c0c24; border: 2px solid #ffd700; width: 360px; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+        #command-list-container { display: flex; flex-direction: column; gap: 8px; max-height: 40vh; overflow-y: auto; margin-bottom: 10px; }
+        .command-item-btn { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid #ffd700; padding: 10px 14px; border-radius: 8px; color: #fff; cursor: pointer; font-weight: bold; text-align: left; transition: all 0.2s; }
+        .command-item-btn:active:not(:disabled) { background: rgba(255,215,0,0.15); box-shadow: 0 0 10px #ffd700; }
+        .command-item-btn:disabled { border-color: #444; color: #666; cursor: not-allowed; }
+
         /* 移動ジョイスティック */
         .controls { position: absolute; bottom: 30px; left: 40px; width: 110px; height: 110px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
         #joystick-handle { width: 45px; height: 45px; background: linear-gradient(135deg, #00ff88, #00bfff); border-radius: 50%; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
@@ -331,6 +339,9 @@
                 if(data.limits) slotLimits = data.limits; if(data.equips) equippedGears = data.equips;
             }
         }
+
+        // 追加: 進捗リセット処理のダミー回避定義
+        function resetProgress() { if(confirm("データをすべて初期化しますか？")) { localStorage.removeItem('CyberBattle_' + currentPilotName); loadGame(currentPilotName); switchScreen('main-menu'); } }
 
         function switchScreen(screenId) {
             document.getElementById('main-menu').style.display = 'none'; document.getElementById('stage-select').style.display = 'none'; document.getElementById('status-shop').style.display = 'none'; document.getElementById('equipment-screen').style.display = 'none'; document.getElementById('option-menu').style.display = 'none'; document.getElementById('result-screen').style.display = 'none';
@@ -684,7 +695,6 @@
         const endJoystick = (e) => { if (!joystickActive) return; if (e) { let stay = false; for(let i=0; i<e.touches.length; i++) { if(e.touches[i].identifier === joystickTouchId) stay = true; } if(stay) return; } joystickActive = false; joystickTouchId = null; handle.style.transition = 'transform 0.15s ease'; handle.style.transform = 'translate(0px, 0px)'; inputX = 0; inputZ = 0; };
         window.addEventListener('touchend', endJoystick); window.addEventListener('touchcancel', endJoystick);
 
-        // ⚡️ 修正ポイント：ボタンのイベント登録をDOM取得直後（あるいはロード時）に確実に行い、競合を防ぐ強固な記述に変更
         document.addEventListener("DOMContentLoaded", () => {
             const attackBtn = document.getElementById('btn-attack');
             const lockonBtn = document.getElementById('btn-lockon');
@@ -782,7 +792,10 @@
                                 for(let k = -2; k <= 2; k++) { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle + k * 0.2), Math.sin(angle + k * 0.2), false, null, 0.25, null, 0xffaa00); }
                             } else { spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(angle), Math.sin(angle), false, player, 0.15, null, 0xff00ff); }
                         } else if (e.type !== 'dummy') {
-                            e.shootTimer = 70 + Math.random()*40; const erraticAngle = angle + (Math.random() - 0.5) * 0.3; spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(errAccessAngle), false);
+                            e.shootTimer = 70 + Math.random()*40; 
+                            const erraticAngle = angle + (Math.random() - 0.5) * 0.3; 
+                            /* ⚡️ 修正: errAccessAngle から erraticAngle に修正 */
+                            spawnBullet(e.mesh.position.x, e.mesh.position.z, Math.cos(erraticAngle), Math.sin(erraticAngle), false);
                         }
                     }
                 });
