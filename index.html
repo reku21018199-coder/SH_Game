@@ -236,6 +236,7 @@
         <div class="menu-btn" onclick="backToMenu()">メニューへ戻る</div>
     </div>
 
+    <!-- コマンドメニュー画面 -->
     <div id="command-menu">
         <div class="command-window">
             <div style="font-size:18px; font-weight:bold; color:#ffd700; margin-bottom:4px;">コマンド選択</div>
@@ -586,7 +587,12 @@
             const navEl = document.getElementById('tutorial-nav');
             
             if (stageNum === 0) {
-                tutorialStep = 1; tutorialTimer = 0; navEl.style.display = 'block'; navEl.textContent = "ジョイスティックを動かして【移動】してみよう";
+                tutorialStep = 1; tutorialTimer = 0; navEl.style.display = 'block'; 
+                // ↓ここを追加・修正しました
+                navEl.style.whiteSpace = 'normal';
+                navEl.style.lineHeight = '1.4';
+                navEl.innerHTML = "ジョイスティックを動かして【移動】してみよう<br><span style='font-size:11px; color:#ffd700; font-weight:normal;'>※機体の移動速度もショップで強化できます</span>";
+                
                 const enemyMesh = createRobot(0xff4444, 0xffaa00, false); enemyMesh.position.set(0, 0, -5); scene.add(enemyMesh);
                 enemies.push({ mesh: enemyMesh, hp: 5, shootTimer: Infinity, type: 'dummy' });
             } else {
